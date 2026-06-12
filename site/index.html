@@ -5,14 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta
       name="description"
-      content="A practical library of repeatable agentic engineering workflows, curated by Forward Future."
+      content="A practical library of repeatable agentic engineering workflows, tips, and best practices, curated by Forward Future."
     />
     <meta name="theme-color" content="#ff5033" />
     <meta property="og:type" content="website" />
     <meta property="og:title" content="Loop Library | Forward Future" />
     <meta
       property="og:description"
-      content="Useful agentic engineering loops, with triggers, verification steps, memory, and stopping conditions."
+      content="Useful agentic engineering loops, tips, and best practices for building agents that make reliable progress."
     />
     <meta
       property="og:url"
@@ -50,6 +50,7 @@
 
       <nav class="site-nav" aria-label="Primary navigation">
         <a href="#library">Library</a>
+        <a href="#tips">Tips</a>
         <a href="#anatomy">Loop anatomy</a>
         <a class="nav-cta" href="#submit">Submit a loop</a>
       </nav>
@@ -432,6 +433,64 @@
           <p>Try a broader search, or submit the workflow you were looking for.</p>
           <a class="button button-dark" href="#submit">Submit a loop</a>
         </div>
+      </section>
+
+      <section class="tips-section" id="tips">
+        <div class="tips-heading">
+          <div>
+            <p class="eyebrow">Tips &amp; best practices</p>
+            <h2>Small habits. Better agent work.</h2>
+          </div>
+          <p>
+            Useful defaults for keeping long-running work legible, recoverable,
+            and easy to hand off.
+          </p>
+        </div>
+
+        <article class="tip-card">
+          <header class="tip-card-header">
+            <span>Tip 001</span>
+            <span>Working memory</span>
+          </header>
+
+          <div class="tip-card-body">
+            <div class="tip-command">
+              <p>Keep track of work in</p>
+              <code>tmp/&lt;file&gt;</code>
+            </div>
+
+            <div class="tip-detail">
+              <h3>Externalize the current state.</h3>
+              <p>
+                For long-running tasks, maintain a small scratch file that lets
+                the agent resume without reconstructing the entire session.
+              </p>
+
+              <ul class="tip-checklist">
+                <li>
+                  <span>Record</span>
+                  <p>The goal, key decisions, completed steps, blockers, and next action.</p>
+                </li>
+                <li>
+                  <span>Update</span>
+                  <p>After each significant step and before any context handoff.</p>
+                </li>
+                <li>
+                  <span>Finish</span>
+                  <p>Move lasting knowledge into the repo, then remove the scratch file.</p>
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <footer class="tip-card-footer">
+            <p>
+              <span>Example</span>
+              <code>tmp/refactor-my-project.md</code>
+            </p>
+            <p class="tip-warning">Temporary workspace only. Never store secrets.</p>
+          </footer>
+        </article>
       </section>
 
       <section class="anatomy-section" id="anatomy">

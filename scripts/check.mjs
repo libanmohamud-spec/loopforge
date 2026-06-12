@@ -26,10 +26,17 @@ assert.equal((html.match(/class="loop-card"/g) || []).length, 3);
 assert(html.includes("<dd>03</dd>"));
 assert(html.includes("Showing 3 loops"));
 assert(html.includes("Submission 004+"));
+assert(html.includes('href="#tips"'));
+assert(html.includes('id="tips"'));
+assert(html.includes("Tips &amp; best practices"));
+assert(html.includes("tmp/&lt;file&gt;"));
+assert(html.includes("Temporary workspace only. Never store secrets."));
+assert.equal((html.match(/class="tip-card"/g) || []).length, 1);
 assert(html.includes('id="loop-form"'));
 assert(html.includes("./.herenow/data/suggestions") === false);
 assert(css.includes("--orange: #ff5033"));
 assert(css.includes("--charcoal: #101010"));
+assert(css.includes(".tips-section"));
 assert(script.includes('fetch("./.herenow/data/suggestions"'));
 assert(!script.includes("innerHTML"));
 

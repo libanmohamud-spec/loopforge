@@ -501,6 +501,7 @@ code {
 }
 
 .section-heading h2,
+.tips-heading h2,
 .anatomy-intro h2,
 .submission-copy h2 {
   margin-bottom: 0;
@@ -858,6 +859,177 @@ code {
 
 .empty-state p:not(.eyebrow) {
   margin-bottom: 28px;
+}
+
+.tips-section {
+  padding: clamp(88px, 10vw, 152px) var(--page-pad);
+  border-top: 1px solid var(--charcoal);
+  border-bottom: 1px solid var(--charcoal);
+  background: var(--orange);
+}
+
+.tips-heading {
+  display: grid;
+  max-width: var(--max-width);
+  margin: 0 auto;
+  align-items: end;
+  gap: 48px;
+  grid-template-columns: minmax(0, 1.3fr) minmax(280px, 0.7fr);
+}
+
+.tips-heading h2 {
+  margin-bottom: 0;
+}
+
+.tips-heading > p {
+  max-width: 460px;
+  margin-bottom: 6px;
+  font-size: 1.05rem;
+}
+
+.tip-card {
+  max-width: var(--max-width);
+  margin: 64px auto 0;
+  border: 1px solid var(--charcoal);
+  background: var(--light);
+  box-shadow: 12px 12px 0 var(--charcoal);
+}
+
+.tip-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 16px 24px;
+  border-bottom: 1px solid var(--charcoal);
+  font-family: var(--font-mono);
+  font-size: 0.66rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.tip-card-body {
+  display: grid;
+  grid-template-columns: minmax(320px, 0.9fr) minmax(0, 1.1fr);
+}
+
+.tip-command {
+  display: flex;
+  min-height: 360px;
+  align-items: flex-start;
+  justify-content: center;
+  padding: clamp(32px, 5vw, 72px);
+  border-right: 1px solid var(--charcoal);
+  flex-direction: column;
+  color: var(--light);
+  background:
+    linear-gradient(rgba(250, 248, 247, 0.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(250, 248, 247, 0.08) 1px, transparent 1px),
+    var(--charcoal);
+  background-size: 24px 24px;
+}
+
+.tip-command p {
+  margin-bottom: 20px;
+  color: var(--orange);
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.tip-command code {
+  color: var(--light);
+  font-size: clamp(2.4rem, 4vw, 4rem);
+  font-weight: 700;
+  letter-spacing: -0.07em;
+  line-height: 0.95;
+  white-space: nowrap;
+}
+
+.tip-detail {
+  padding: clamp(32px, 5vw, 72px);
+}
+
+.tip-detail h3 {
+  margin-bottom: 18px;
+  font-size: clamp(2rem, 3.6vw, 4rem);
+  font-weight: 800;
+  letter-spacing: -0.055em;
+  line-height: 1;
+}
+
+.tip-detail > p {
+  max-width: 640px;
+  margin-bottom: 36px;
+  color: var(--muted);
+  font-size: 1rem;
+}
+
+.tip-checklist {
+  margin-bottom: 0;
+  padding-left: 0;
+  border-top: 1px solid var(--charcoal);
+  list-style: none;
+}
+
+.tip-checklist li {
+  display: grid;
+  align-items: start;
+  gap: 20px;
+  padding: 18px 0;
+  grid-template-columns: 88px minmax(0, 1fr);
+  border-bottom: 1px solid var(--line);
+}
+
+.tip-checklist li > span {
+  padding-top: 2px;
+  font-family: var(--font-mono);
+  font-size: 0.64rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.tip-checklist p {
+  margin-bottom: 0;
+  font-size: 0.92rem;
+}
+
+.tip-card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 28px;
+  padding: 20px 24px;
+  border-top: 1px solid var(--charcoal);
+}
+
+.tip-card-footer p {
+  margin-bottom: 0;
+}
+
+.tip-card-footer p > span {
+  margin-right: 12px;
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.tip-card-footer code {
+  font-size: 0.82rem;
+}
+
+.tip-warning {
+  color: var(--muted);
+  font-family: var(--font-mono);
+  font-size: 0.64rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
 }
 
 .anatomy-section {
@@ -1291,6 +1463,10 @@ code {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 
+  .tip-card-body {
+    grid-template-columns: minmax(280px, 0.82fr) minmax(0, 1.18fr);
+  }
+
   .submission-section {
     grid-template-columns: minmax(0, 0.7fr) minmax(480px, 1.3fr);
   }
@@ -1319,6 +1495,7 @@ code {
   }
 
   .section-heading,
+  .tips-heading,
   .anatomy-intro {
     align-items: start;
     grid-template-columns: 1fr;
@@ -1327,6 +1504,20 @@ code {
   .anatomy-intro > p:last-child {
     grid-column: 1;
     grid-row: auto;
+  }
+
+  .tips-heading > p {
+    max-width: 600px;
+  }
+
+  .tip-card-body {
+    grid-template-columns: 1fr;
+  }
+
+  .tip-command {
+    min-height: 300px;
+    border-right: 0;
+    border-bottom: 1px solid var(--charcoal);
   }
 
   .loop-card-header {
@@ -1509,6 +1700,34 @@ code {
 
   .anatomy-grid li > span {
     margin-bottom: 36px;
+  }
+
+  .tip-card {
+    box-shadow: 6px 6px 0 var(--charcoal);
+  }
+
+  .tip-command {
+    min-height: 240px;
+    padding: 32px 22px;
+  }
+
+  .tip-command code {
+    font-size: clamp(2.2rem, 10vw, 3rem);
+  }
+
+  .tip-detail {
+    padding: 32px 22px;
+  }
+
+  .tip-checklist li {
+    gap: 8px;
+    grid-template-columns: 1fr;
+  }
+
+  .tip-card-footer {
+    align-items: flex-start;
+    padding: 20px 22px;
+    flex-direction: column;
   }
 
   .submission-form {
