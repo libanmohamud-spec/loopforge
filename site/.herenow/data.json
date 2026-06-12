@@ -1,0 +1,54 @@
+{
+  "collections": {
+    "suggestions": {
+      "fields": {
+        "name": {
+          "type": "string",
+          "required": true,
+          "maxLength": 80,
+          "trim": true
+        },
+        "email": {
+          "type": "string",
+          "maxLength": 160,
+          "trim": true
+        },
+        "loop_title": {
+          "type": "string",
+          "required": true,
+          "maxLength": 120,
+          "trim": true
+        },
+        "loop_type": {
+          "type": "string",
+          "required": true,
+          "maxLength": 32,
+          "trim": true
+        },
+        "instructions": {
+          "type": "string",
+          "required": true,
+          "maxLength": 3000,
+          "trim": true
+        },
+        "why_it_works": {
+          "type": "string",
+          "maxLength": 1000,
+          "trim": true
+        },
+        "source_url": {
+          "type": "string",
+          "maxLength": 300,
+          "trim": true
+        }
+      },
+      "access": {
+        "read": "owner",
+        "insert": "public",
+        "update": "owner",
+        "delete": "owner"
+      },
+      "rateLimit": "3/hour/ip"
+    }
+  }
+}

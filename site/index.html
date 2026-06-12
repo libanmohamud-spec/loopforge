@@ -1,0 +1,554 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="A practical library of repeatable agentic engineering workflows, curated by Forward Future."
+    />
+    <meta name="theme-color" content="#ff5033" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Loop Library | Forward Future" />
+    <meta
+      property="og:description"
+      content="Useful agentic engineering loops, with triggers, verification steps, memory, and stopping conditions."
+    />
+    <meta
+      property="og:url"
+      content="https://signals.forwardfuture.ai/loop-library/"
+    />
+    <meta
+      property="og:image"
+      content="https://signals.forwardfuture.ai/loop-library/assets/ff-mark.png"
+    />
+    <link
+      rel="canonical"
+      href="https://signals.forwardfuture.ai/loop-library/"
+    />
+    <link rel="icon" type="image/png" href="./assets/favicon.png" />
+    <link rel="stylesheet" href="./styles.css" />
+    <script src="./script.js" defer></script>
+    <title>Loop Library | Forward Future</title>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+
+    <header class="site-header">
+      <a class="brand-lockup" href="#top" aria-label="Forward Future Loop Library">
+        <img
+          class="brand-mark"
+          src="./assets/favicon.png"
+          width="40"
+          height="40"
+          alt=""
+        />
+        <span class="brand-name">Forward Future</span>
+        <span class="brand-divider" aria-hidden="true"></span>
+        <span class="brand-product">Loop Library</span>
+      </a>
+
+      <nav class="site-nav" aria-label="Primary navigation">
+        <a href="#library">Library</a>
+        <a href="#anatomy">Loop anatomy</a>
+        <a class="nav-cta" href="#submit">Submit a loop</a>
+      </nav>
+    </header>
+
+    <main id="main">
+      <section class="hero" id="top">
+        <div class="hero-copy">
+          <p class="eyebrow">An open field guide for agent builders</p>
+          <h1>Agent loops worth stealing.</h1>
+          <p class="hero-lede">
+            Do not just give an agent a task. Give it a trigger, a way to
+            verify the work, somewhere to remember what happened, and a clear
+            reason to stop.
+          </p>
+
+          <div class="hero-actions">
+            <a class="button button-dark" href="#library">Explore the loops</a>
+            <a class="text-link" href="#submit">Add one that works <span aria-hidden="true">&rarr;</span></a>
+          </div>
+
+          <dl class="hero-stats" aria-label="Library statistics">
+            <div>
+              <dt>Loops</dt>
+              <dd>02</dd>
+            </div>
+            <div>
+              <dt>Types</dt>
+              <dd>02</dd>
+            </div>
+            <div>
+              <dt>Status</dt>
+              <dd>Open</dd>
+            </div>
+          </dl>
+        </div>
+
+        <div class="hero-system" aria-label="Observe, act, verify, and remember">
+          <div class="system-meta">
+            <span>Loop index</span>
+            <span>001 &rarr; &infin;</span>
+          </div>
+
+          <div class="loop-diagram" aria-hidden="true">
+            <svg viewBox="0 0 620 620" role="presentation">
+              <defs>
+                <marker
+                  id="arrow"
+                  markerWidth="12"
+                  markerHeight="12"
+                  refX="9"
+                  refY="6"
+                  orient="auto"
+                >
+                  <path d="M 0 0 L 12 6 L 0 12 z"></path>
+                </marker>
+              </defs>
+              <path
+                class="loop-path loop-path-one"
+                d="M310 86 C452 86 534 178 534 310"
+              ></path>
+              <path
+                class="loop-path loop-path-two"
+                d="M534 310 C534 452 442 534 310 534"
+              ></path>
+              <path
+                class="loop-path loop-path-three"
+                d="M310 534 C168 534 86 442 86 310"
+              ></path>
+              <path
+                class="loop-path loop-path-four"
+                d="M86 310 C86 168 178 86 310 86"
+              ></path>
+              <circle class="diagram-ring" cx="310" cy="310" r="148"></circle>
+              <circle class="diagram-core" cx="310" cy="310" r="96"></circle>
+            </svg>
+
+            <div class="diagram-center">
+              <span>Repeat</span>
+              <strong>Until<br />done.</strong>
+            </div>
+            <span class="diagram-label label-observe">01 / Observe</span>
+            <span class="diagram-label label-act">02 / Act</span>
+            <span class="diagram-label label-verify">03 / Verify</span>
+            <span class="diagram-label label-remember">04 / Remember</span>
+          </div>
+
+          <p class="system-note">
+            The useful loop is not infinite. It has evidence, memory, and a
+            stopping condition.
+          </p>
+        </div>
+      </section>
+
+      <section class="library-section" id="library">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">The library</p>
+            <h2>Loops you can run today.</h2>
+          </div>
+          <p>
+            Each entry includes the prompt plus the operating structure that
+            makes it useful in a real codebase.
+          </p>
+        </div>
+
+        <div class="library-controls">
+          <label class="search-control">
+            <span class="sr-only">Search loops</span>
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <circle cx="11" cy="11" r="7"></circle>
+              <path d="m20 20-4-4"></path>
+            </svg>
+            <input
+              id="loop-search"
+              type="search"
+              placeholder="Search loops, prompts, or people"
+              autocomplete="off"
+            />
+          </label>
+
+          <div class="filter-group" aria-label="Filter by loop type">
+            <button class="filter-button is-active" type="button" data-filter="all">
+              All
+            </button>
+            <button class="filter-button" type="button" data-filter="scheduled">
+              Scheduled
+            </button>
+            <button class="filter-button" type="button" data-filter="goal">
+              Goal
+            </button>
+          </div>
+        </div>
+
+        <div class="results-line">
+          <p id="results-count" aria-live="polite">Showing 2 loops</p>
+          <span>Community edition 001</span>
+        </div>
+
+        <div class="loop-list">
+          <article
+            class="loop-card"
+            data-type="scheduled"
+            data-search="scheduled nightly documentation docs pull request pr matthew berman review codebase"
+          >
+            <header class="loop-card-header">
+              <span class="loop-number">001</span>
+              <div>
+                <p class="loop-type">
+                  <span class="type-dot" aria-hidden="true"></span>
+                  Scheduled loop
+                </p>
+                <h3>The overnight docs sweep</h3>
+              </div>
+              <p class="attribution">
+                Contributed by
+                <strong>Matthew Berman</strong>
+              </p>
+            </header>
+
+            <div class="loop-card-body">
+              <div class="prompt-panel">
+                <div class="panel-label">
+                  <span>Run this prompt</span>
+                  <button class="copy-button" type="button">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                      <rect x="8" y="8" width="11" height="11" rx="1"></rect>
+                      <path d="M16 8V5H5v11h3"></path>
+                    </svg>
+                    <span>Copy loop</span>
+                  </button>
+                </div>
+                <p class="prompt-text" data-prompt>
+                  Each night, review the codebase in full and make sure all
+                  documentation reflects the latest changes from the previous
+                  day. Update the documentation as needed, then open a pull
+                  request with those changes.
+                </p>
+              </div>
+
+              <dl class="loop-spec">
+                <div>
+                  <dt>Trigger</dt>
+                  <dd>Nightly schedule</dd>
+                </div>
+                <div>
+                  <dt>Inspect</dt>
+                  <dd>Full codebase and the previous day's changes</dd>
+                </div>
+                <div>
+                  <dt>Verify</dt>
+                  <dd>Documentation matches the current implementation</dd>
+                </div>
+                <div>
+                  <dt>Output</dt>
+                  <dd>A reviewable pull request</dd>
+                </div>
+              </dl>
+            </div>
+
+            <footer class="loop-card-footer">
+              <p>
+                <span>Why it works</span>
+                It turns documentation drift into a small, reviewable daily
+                maintenance task instead of a cleanup project.
+              </p>
+              <div class="loop-pathline" aria-label="Loop sequence">
+                <span>Schedule</span>
+                <i aria-hidden="true"></i>
+                <span>Review</span>
+                <i aria-hidden="true"></i>
+                <span>Update</span>
+                <i aria-hidden="true"></i>
+                <span>PR</span>
+              </div>
+            </footer>
+          </article>
+
+          <article
+            class="loop-card"
+            data-type="goal"
+            data-search="goal refactor architecture live test autoreview commit progress tmp peter steinberger"
+          >
+            <header class="loop-card-header">
+              <span class="loop-number loop-number-violet">002</span>
+              <div>
+                <p class="loop-type">
+                  <span class="type-dot type-dot-violet" aria-hidden="true"></span>
+                  Goal loop
+                </p>
+                <h3>The architecture satisfaction loop</h3>
+              </div>
+              <p class="attribution">
+                Contributed by
+                <strong>Peter Steinberger</strong>
+              </p>
+            </header>
+
+            <div class="loop-card-body">
+              <div class="prompt-panel">
+                <div class="panel-label">
+                  <span>Run this prompt</span>
+                  <button class="copy-button" type="button">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                      <rect x="8" y="8" width="11" height="11" rx="1"></rect>
+                      <path d="M16 8V5H5v11h3"></path>
+                    </svg>
+                    <span>Copy loop</span>
+                  </button>
+                </div>
+                <p class="prompt-text" data-prompt>
+                  Refactor until you are happy with the architecture. After
+                  each significant step, live-test the system, run autoreview,
+                  and commit. Track progress in
+                  /tmp/refactor-{projectname}.md.
+                </p>
+              </div>
+
+              <dl class="loop-spec">
+                <div>
+                  <dt>Goal</dt>
+                  <dd>A coherent architecture, not a fixed task count</dd>
+                </div>
+                <div>
+                  <dt>Checkpoint</dt>
+                  <dd>Live test, autoreview, and commit each significant step</dd>
+                </div>
+                <div>
+                  <dt>Memory</dt>
+                  <dd><code>/tmp/refactor-{projectname}.md</code></dd>
+                </div>
+                <div>
+                  <dt>Stop</dt>
+                  <dd>The architecture is satisfactory and checks pass</dd>
+                </div>
+              </dl>
+            </div>
+
+            <footer class="loop-card-footer">
+              <p>
+                <span>Why it works</span>
+                It keeps a broad refactor inspectable by pairing every major
+                move with live evidence, review, a commit, and external memory.
+              </p>
+              <div class="loop-pathline" aria-label="Loop sequence">
+                <span>Refactor</span>
+                <i aria-hidden="true"></i>
+                <span>Test</span>
+                <i aria-hidden="true"></i>
+                <span>Review</span>
+                <i aria-hidden="true"></i>
+                <span>Commit</span>
+              </div>
+            </footer>
+          </article>
+        </div>
+
+        <div class="empty-state" id="empty-state" hidden>
+          <p class="eyebrow">No match</p>
+          <h3>That loop is not in the library yet.</h3>
+          <p>Try a broader search, or submit the workflow you were looking for.</p>
+          <a class="button button-dark" href="#submit">Submit a loop</a>
+        </div>
+      </section>
+
+      <section class="anatomy-section" id="anatomy">
+        <div class="anatomy-intro">
+          <p class="eyebrow eyebrow-light">Loop anatomy</p>
+          <h2>A loop needs more than repetition.</h2>
+          <p>
+            The best agent workflows make progress visible. They tell the agent
+            when to run, what evidence counts, where state lives, and when the
+            job is actually finished.
+          </p>
+        </div>
+
+        <ol class="anatomy-grid">
+          <li>
+            <span>01</span>
+            <h3>Trigger</h3>
+            <p>A schedule, event, failure, or goal starts the loop.</p>
+          </li>
+          <li>
+            <span>02</span>
+            <h3>Move</h3>
+            <p>A bounded action advances the work without hiding the diff.</p>
+          </li>
+          <li>
+            <span>03</span>
+            <h3>Proof</h3>
+            <p>Tests, review, or live behavior show whether the move worked.</p>
+          </li>
+          <li>
+            <span>04</span>
+            <h3>Memory</h3>
+            <p>A file, commit, issue, or record carries context forward.</p>
+          </li>
+          <li>
+            <span>05</span>
+            <h3>Stop</h3>
+            <p>A concrete condition prevents motion from becoming churn.</p>
+          </li>
+        </ol>
+      </section>
+
+      <section class="submission-section" id="submit">
+        <div class="submission-copy">
+          <p class="eyebrow">Grow the library</p>
+          <h2>What loop keeps paying for itself?</h2>
+          <p class="submission-lede">
+            Send the version you actually use. Specific triggers, checks, and
+            stopping conditions are more useful than a polished theory.
+          </p>
+
+          <div class="moderation-note">
+            <h3>Private by default. Reviewed by a human.</h3>
+            <ul>
+              <li>Suggestions are not published automatically.</li>
+              <li>The review queue is not publicly readable.</li>
+              <li>Submissions are rate-limited and field-size limited.</li>
+              <li>Do not include secrets, credentials, or private code.</li>
+            </ul>
+          </div>
+        </div>
+
+        <form class="submission-form" id="loop-form" novalidate>
+          <div class="form-heading">
+            <span>Submission 003+</span>
+            <p>All fields marked * are required.</p>
+          </div>
+
+          <div class="field-grid">
+            <label class="field">
+              <span>Your name or handle *</span>
+              <input
+                name="name"
+                type="text"
+                maxlength="80"
+                autocomplete="name"
+                required
+              />
+            </label>
+
+            <label class="field">
+              <span>Email <small>optional, private</small></span>
+              <input
+                name="email"
+                type="email"
+                maxlength="160"
+                autocomplete="email"
+              />
+            </label>
+          </div>
+
+          <div class="field-grid">
+            <label class="field">
+              <span>Loop title *</span>
+              <input name="loop_title" type="text" maxlength="120" required />
+            </label>
+
+            <label class="field">
+              <span>Loop type *</span>
+              <select name="loop_type" required>
+                <option value="">Choose a type</option>
+                <option value="scheduled">Scheduled</option>
+                <option value="goal">Goal</option>
+                <option value="event">Event-driven</option>
+                <option value="review">Review</option>
+                <option value="recovery">Recovery</option>
+                <option value="other">Other</option>
+              </select>
+            </label>
+          </div>
+
+          <label class="field">
+            <span>Loop instructions *</span>
+            <textarea
+              name="instructions"
+              rows="7"
+              maxlength="3000"
+              placeholder="Write the prompt or operating instructions as someone should run them."
+              required
+            ></textarea>
+            <small class="field-counter" data-counter-for="instructions">0 / 3000</small>
+          </label>
+
+          <label class="field">
+            <span>Why it works <small>optional</small></span>
+            <textarea
+              name="why_it_works"
+              rows="4"
+              maxlength="1000"
+              placeholder="What failure does this loop prevent? What makes it reliable?"
+            ></textarea>
+            <small class="field-counter" data-counter-for="why_it_works">0 / 1000</small>
+          </label>
+
+          <label class="field">
+            <span>Source link <small>optional</small></span>
+            <input
+              name="source_url"
+              type="url"
+              maxlength="300"
+              inputmode="url"
+              placeholder="https://"
+            />
+          </label>
+
+          <div class="form-trap" aria-hidden="true">
+            <label>
+              Company
+              <input
+                name="company"
+                type="text"
+                tabindex="-1"
+                autocomplete="off"
+              />
+            </label>
+          </div>
+
+          <label class="consent-field">
+            <input name="permission" type="checkbox" required />
+            <span>
+              I have the right to share this loop and understand it may be
+              edited for clarity before publication.
+            </span>
+          </label>
+
+          <div class="form-footer">
+            <p>
+              By submitting, you agree not to send confidential or harmful
+              material.
+            </p>
+            <button class="button button-dark submit-button" type="submit">
+              <span>Send for review</span>
+              <span aria-hidden="true">&rarr;</span>
+            </button>
+          </div>
+
+          <p class="form-status" id="form-status" role="status" aria-live="polite"></p>
+        </form>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="footer-brand">
+        <img src="./assets/favicon.png" width="48" height="48" alt="" />
+        <div>
+          <strong>Forward Future</strong>
+          <span>Make the future legible.</span>
+        </div>
+      </div>
+      <div class="footer-meta">
+        <a href="https://forwardfuture.ai/" rel="noopener">forwardfuture.ai</a>
+        <span>Loop Library / Edition 001</span>
+        <span>&copy; 2026 Forward Future</span>
+      </div>
+    </footer>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  </body>
+</html>
