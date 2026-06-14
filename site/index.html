@@ -52,7 +52,7 @@
       href="https://signals.forwardfuture.ai/loop-library/"
     />
     <link rel="icon" type="image/png" href="./assets/favicon.png" />
-    <link rel="stylesheet" href="./styles.css?v=20260612-dark-mode" />
+    <link rel="stylesheet" href="./styles.css?v=20260613-loop-setup" />
     <script src="./script.js?v=20260612-dark-mode" defer></script>
     <title>Loop Library | Forward Future</title>
   </head>
@@ -511,6 +511,91 @@
 
           <p class="form-status" id="form-status" role="status" aria-live="polite"></p>
         </form>
+      </section>
+
+      <section class="setup-section" id="setup">
+        <div class="page-width">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">Put them to work</p>
+              <h2>Set up a loop</h2>
+            </div>
+            <p>
+              Copy a loop above, keep its proof and stopping condition, then
+              use the native workflow in your coding agent.
+            </p>
+          </div>
+
+          <div class="setup-grid">
+            <article class="setup-card">
+              <header class="setup-card-header">
+                <span>01</span>
+                <h3>Codex</h3>
+              </header>
+              <dl>
+                <div>
+                  <dt>Goal loop</dt>
+                  <dd>Paste the loop into a project thread and run it.</dd>
+                </div>
+                <div>
+                  <dt>Scheduled loop</dt>
+                  <dd>
+                    Open <strong>Automations</strong>, create a project
+                    automation, paste the loop, and choose its schedule and run
+                    location.
+                  </dd>
+                </div>
+              </dl>
+            </article>
+
+            <article class="setup-card">
+              <header class="setup-card-header">
+                <span>02</span>
+                <h3>Cursor</h3>
+              </header>
+              <dl>
+                <div>
+                  <dt>Goal loop</dt>
+                  <dd>
+                    Paste it into Agent, or save it as
+                    <code>.cursor/skills/&lt;name&gt;/SKILL.md</code> and invoke
+                    <code>/&lt;name&gt;</code>.
+                  </dd>
+                </div>
+                <div>
+                  <dt>Scheduled loop</dt>
+                  <dd>
+                    Open <strong>Automations</strong> from the Agents Window,
+                    choose a trigger, paste the loop, and select its repo and
+                    tools.
+                  </dd>
+                </div>
+              </dl>
+            </article>
+
+            <article class="setup-card">
+              <header class="setup-card-header">
+                <span>03</span>
+                <h3>Claude Code</h3>
+              </header>
+              <dl>
+                <div>
+                  <dt>Goal loop</dt>
+                  <dd>
+                    Run <code>/goal &lt;completion condition&gt;</code>.
+                  </dd>
+                </div>
+                <div>
+                  <dt>Scheduled loop</dt>
+                  <dd>
+                    Run <code>/loop 30m &lt;prompt&gt;</code>. Put a reusable
+                    default prompt in <code>.claude/loop.md</code>.
+                  </dd>
+                </div>
+              </dl>
+            </article>
+          </div>
+        </div>
       </section>
     </main>
 
