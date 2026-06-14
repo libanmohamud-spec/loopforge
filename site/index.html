@@ -135,7 +135,7 @@
         </div>
 
         <div class="results-line">
-          <p id="results-count" aria-live="polite">Showing 7 loops</p>
+          <p id="results-count" aria-live="polite">Showing 8 loops</p>
           <span>Updated June 2026</span>
         </div>
 
@@ -393,6 +393,48 @@
                   <span class="cell-label">Verify / stop</span>
                   <strong>The logging coverage matrix has no unexplained gaps.</strong>
                   <span>Tests and representative runs prove useful, correlated, and safely redacted events.</span>
+                </td>
+                <td class="cell-attribution">
+                  <span class="cell-label">Attribution</span>
+                  Matthew Berman
+                </td>
+                <td class="cell-action">
+                  <button class="copy-button" type="button">
+                    <span>Copy</span>
+                  </button>
+                </td>
+              </tr>
+
+              <tr
+                class="loop-row"
+                data-type="scheduled"
+                data-search="scheduled nightly changelog changes previous 24 hours commits merged pull requests prs deployments repository release notes history deduplicate verify matthew berman"
+              >
+                <td class="cell-number">008</td>
+                <td class="cell-type">
+                  <span class="type-badge type-scheduled">Scheduled</span>
+                </td>
+                <td class="cell-loop">
+                  <h3>The nightly changelog sweep</h3>
+                  <p data-prompt>
+                    Each night, inspect every commit, merged pull request,
+                    deployment, and repository change from the previous 24
+                    hours. Compare the full set against the current changelog,
+                    add a dated entry for each missing change in the right
+                    category, and include useful issue, pull request, or commit
+                    references. Preserve existing entries and avoid duplicates.
+                    Verify that every in-scope change is either represented in
+                    the changelog or explicitly documented as
+                    changelog-exempt. If there were no changes, record that no
+                    update was needed without adding an empty release entry.
+                    When the changelog changes, run the relevant checks and
+                    commit the update.
+                  </p>
+                </td>
+                <td class="cell-check">
+                  <span class="cell-label">Verify / stop</span>
+                  <strong>Every change from the previous 24 hours is accounted for.</strong>
+                  <span>The changelog is updated and validated, or the no-change result is recorded.</span>
                 </td>
                 <td class="cell-attribution">
                   <span class="cell-label">Attribution</span>
