@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { createHash } from "node:crypto";
 import { readFile, readdir } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 import path from "node:path";
@@ -50,6 +51,23 @@ const weeklySignups = dataManifest.collections?.weekly_signups;
 const structuredDataMatch = html.match(
   /<script type="application\/ld\+json">\s*([\s\S]*?)\s*<\/script>/,
 );
+const homeSocialImageName = `loop-library-${siteMeta.socialImageVersion}.jpg`;
+const loopSocialImageNames = loops.map(
+  (loop) => `${loop.slug}-${siteMeta.socialImageVersion}.jpg`,
+);
+const expectedSocialImageNames = [homeSocialImageName, ...loopSocialImageNames];
+const jpegStartOfFrameMarkers = new Set([
+  0xc0, 0xc1, 0xc2, 0xc3, 0xc5, 0xc6, 0xc7,
+  0xc9, 0xca, 0xcb, 0xcd, 0xce, 0xcf,
+]);
+const [socialImageNames, socialImages] = await Promise.all([
+  readdir(path.join(siteRoot, "assets", "social")),
+  Promise.all(
+    expectedSocialImageNames.map((name) =>
+      readFile(path.join(siteRoot, "assets", "social", name)),
+    ),
+  ),
+]);
 
 function escapeHtml(value) {
   return String(value)
@@ -58,6 +76,37 @@ function escapeHtml(value) {
     .replaceAll(">", "&gt;")
     .replaceAll('"', "&quot;")
     .replaceAll("'", "&#39;");
+}
+
+function jpegSize(buffer) {
+  assert.equal(buffer[0], 0xff);
+  assert.equal(buffer[1], 0xd8);
+
+  let offset = 2;
+  while (offset + 8 < buffer.length) {
+    if (buffer[offset] !== 0xff) {
+      offset += 1;
+      continue;
+    }
+
+    const marker = buffer[offset + 1];
+    if (marker === 0xd8 || marker === 0xd9) {
+      offset += 2;
+      continue;
+    }
+
+    const segmentLength = buffer.readUInt16BE(offset + 2);
+    if (jpegStartOfFrameMarkers.has(marker)) {
+      return {
+        height: buffer.readUInt16BE(offset + 5),
+        width: buffer.readUInt16BE(offset + 7),
+      };
+    }
+
+    offset += 2 + segmentLength;
+  }
+
+  throw new Error("JPEG dimensions not found");
 }
 
 assert(structuredDataMatch);
@@ -91,6 +140,7 @@ assert.equal(loops.length, 15);
 assert.equal(slugs.size, loops.length);
 assert.equal(titles.size, loops.length);
 assert.equal(prompts.size, loops.length);
+assert.match(siteMeta.socialImageVersion, /^\d{8}$/);
 assert.equal(new Set(loops.map((loop) => loop.number)).size, loops.length);
 assert.equal(new Set(loops.map((loop) => loop.seoTitle)).size, loops.length);
 assert(loops.every((loop) => !Object.hasOwn(loop, "type")));
@@ -100,6 +150,8 @@ assert.deepEqual(loopDirectories.sort(), [...slugs].sort());
 
 for (const [index, loop] of loops.entries()) {
   const url = `${siteMeta.baseUrl}loops/${loop.slug}/`;
+  const imageUrl = `${siteMeta.baseUrl}assets/social/${loop.slug}-${siteMeta.socialImageVersion}.jpg`;
+  const imageAlt = `${loop.title} — Forward Future Loop Library`;
   const page = loopPages[index];
   const listItem = collection.mainEntity.itemListElement[index];
   const homepageHref = `href="./loops/${loop.slug}/"`;
@@ -126,6 +178,20 @@ for (const [index, loop] of loops.entries()) {
   assert(html.includes(homepageHref));
   assert(page.includes(`<title>${loop.seoTitle}</title>`));
   assert(page.includes(`<link rel="canonical" href="${url}"`));
+  assert(page.includes(`<meta property="og:image" content="${imageUrl}"`));
+  assert(page.includes(`<meta property="og:image:secure_url" content="${imageUrl}"`));
+  assert(page.includes('<meta property="og:image:type" content="image/jpeg"'));
+  assert(page.includes('<meta property="og:image:width" content="1200"'));
+  assert(page.includes('<meta property="og:image:height" content="630"'));
+  assert(page.includes(`<meta property="og:image:alt" content="${imageAlt}"`));
+  assert(page.includes('<meta name="twitter:card" content="summary_large_image"'));
+  assert(page.includes(`<meta name="twitter:image" content="${imageUrl}"`));
+  assert(page.includes(`<meta name="twitter:image:alt" content="${imageAlt}"`));
+  assert(
+    !page.includes(
+      `<meta property="og:image" content="${siteMeta.baseUrl}assets/ff-mark.png"`,
+    ),
+  );
   assert(page.includes(loop.description));
   assert(page.includes(escapeHtml(loop.prompt)));
   assert(page.includes(`<p class="eyebrow">Loop ${loop.number}</p>`));
@@ -167,9 +233,30 @@ for (const [index, loop] of loops.entries()) {
   assert.equal(article.url, url);
   assert.equal(article.headline, loop.title);
   assert.equal(article.dateModified, loop.modified);
+  assert.equal(article.image.url, imageUrl);
+  assert.equal(article.image.width, 1200);
+  assert.equal(article.image.height, 630);
   assert(sitemap.includes(`<loc>${url}</loc>`));
   assert(sitemap.includes(`<lastmod>${loop.modified}</lastmod>`));
   assert(feed.includes(`<id>${url}</id>`));
+}
+
+assert(
+  expectedSocialImageNames.every((name) => socialImageNames.includes(name)),
+);
+assert.equal(socialImages.length, loops.length + 1);
+assert.equal(
+  new Set(
+    socialImages.map((image) =>
+      createHash("sha256").update(image).digest("hex"),
+    ),
+  ).size,
+  socialImages.length,
+);
+for (const image of socialImages) {
+  assert.deepEqual(jpegSize(image), { width: 1200, height: 630 });
+  assert(image.length >= 80_000);
+  assert(image.length < 5_000_000);
 }
 
 assert(html.includes("Continue until every page loads in under 50 ms."));
@@ -196,6 +283,16 @@ assert(html.includes('class="loop-table"'));
 assert(!html.includes('class="loop-diagram"'));
 assert(html.includes(`Showing ${loops.length} loops`));
 assert(html.includes(`<time datetime="${siteMeta.updated}">`));
+assert(
+  html.includes(
+    `${siteMeta.baseUrl}assets/social/${homeSocialImageName}`,
+  ),
+);
+assert(html.includes('<meta property="og:image:type" content="image/jpeg"'));
+assert(html.includes('<meta property="og:image:width" content="1200"'));
+assert(html.includes('<meta property="og:image:height" content="630"'));
+assert(html.includes('<meta name="twitter:card" content="summary_large_image"'));
+assert(html.includes('name="twitter:image:alt"'));
 assert(!html.includes("Filter by loop type"));
 assert(!html.includes('data-filter='));
 assert(!html.includes('data-type='));

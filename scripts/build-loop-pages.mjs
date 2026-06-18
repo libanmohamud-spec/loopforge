@@ -33,6 +33,10 @@ function absoluteUrl(slug = "") {
   return `${site.baseUrl}${slug ? `loops/${slug}/` : ""}`;
 }
 
+function socialImageUrl(loop) {
+  return `${site.baseUrl}assets/social/${loop.slug}-${site.socialImageVersion}.jpg`;
+}
+
 function relatedLinks(loop) {
   return loop.related
     .map((slug) => loops.find((candidate) => candidate.slug === slug))
@@ -70,6 +74,7 @@ function hereNowCredit(assetPath, modifier) {
 
 function structuredData(loop) {
   const url = absoluteUrl(loop.slug);
+  const imageUrl = socialImageUrl(loop);
   const [authorName, authorAffiliation] = loop.author.split(" / ");
   const author = {
     "@type": "Person",
@@ -115,6 +120,12 @@ function structuredData(loop) {
           dateModified: loop.modified,
           articleSection: loop.categoryLabel,
           keywords: loop.keywords,
+          image: {
+            "@type": "ImageObject",
+            url: imageUrl,
+            width: 1200,
+            height: 630,
+          },
           author,
           publisher: {
             "@id": `${site.baseUrl}#organization`,
@@ -144,6 +155,8 @@ function structuredData(loop) {
 
 function renderLoopPage(loop) {
   const url = absoluteUrl(loop.slug);
+  const imageUrl = socialImageUrl(loop);
+  const imageAlt = `${loop.title} — Forward Future Loop Library`;
   const steps = loop.steps
     .map((step) => `                <li>${escapeHtml(step)}</li>`)
     .join("\n");
@@ -188,14 +201,19 @@ function renderLoopPage(loop) {
     <meta property="og:title" content="${escapeHtml(loop.seoTitle)}" />
     <meta property="og:description" content="${escapeHtml(loop.description)}" />
     <meta property="og:url" content="${escapeHtml(url)}" />
-    <meta property="og:image" content="${escapeHtml(site.baseUrl)}assets/ff-mark.png" />
-    <meta property="og:image:alt" content="Forward Future Loop Library" />
+    <meta property="og:image" content="${escapeHtml(imageUrl)}" />
+    <meta property="og:image:secure_url" content="${escapeHtml(imageUrl)}" />
+    <meta property="og:image:type" content="image/jpeg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="${escapeHtml(imageAlt)}" />
     <meta property="article:published_time" content="${escapeHtml(loop.published)}" />
     <meta property="article:modified_time" content="${escapeHtml(loop.modified)}" />
-    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="${escapeHtml(loop.seoTitle)}" />
     <meta name="twitter:description" content="${escapeHtml(loop.description)}" />
-    <meta name="twitter:image" content="${escapeHtml(site.baseUrl)}assets/ff-mark.png" />
+    <meta name="twitter:image" content="${escapeHtml(imageUrl)}" />
+    <meta name="twitter:image:alt" content="${escapeHtml(imageAlt)}" />
     <link rel="canonical" href="${escapeHtml(url)}" />
     <link rel="sitemap" type="application/xml" href="${escapeHtml(site.baseUrl)}sitemap.xml" />
     <link rel="alternate" type="application/atom+xml" title="${escapeHtml(site.name)} updates" href="${escapeHtml(site.baseUrl)}feed.xml" />

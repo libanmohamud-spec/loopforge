@@ -14,8 +14,12 @@ Then open `http://localhost:4173`.
 
 ```bash
 npm --prefix worker install
+python3 -m pip install -r scripts/requirements-social.txt
+node scripts/build-social-images.mjs
 node scripts/build-loop-pages.mjs
+node --check scripts/build-social-images.mjs
 node --check site/script.js
+python3 -m py_compile scripts/render-social-images.py
 node scripts/check.mjs
 npm --prefix worker run check
 python3 -m json.tool site/.herenow/data.json >/dev/null
@@ -30,14 +34,27 @@ When adding or editing a loop:
 
 1. Update the table row and visible count in `site/index.html`.
 2. Update the matching entry in `scripts/loop-data.mjs`.
-3. Run `node scripts/build-loop-pages.mjs`.
-4. Run the checks above.
+3. Run `node scripts/build-social-images.mjs`.
+4. Run `node scripts/build-loop-pages.mjs`.
+5. Run the checks above.
 
 The generator writes:
 
+- `site/assets/social/*.jpg`
 - `site/loops/<slug>/index.html`
 - `site/sitemap.xml`
 - `site/feed.xml`
+
+Social previews are 1200 × 630 JPEGs for large X cards and Open Graph embeds.
+The homepage gets a library-wide image, while every loop page gets a card with
+its own title, loop number, category, and contributor. Bump
+`site.socialImageVersion` in `scripts/loop-data.mjs` whenever the artwork is
+regenerated so social platforms fetch the new URLs instead of serving a stale
+cached image. The generator preserves older versioned cards so existing shared
+links keep their artwork; remove an old version only as an explicit cleanup.
+The renderer pins Pillow and vendors Inter 4.1 plus IBM Plex Mono 2.5.0 under
+their SIL Open Font License files, making card typography portable and keeping
+one versioned URL tied to one immutable image.
 
 After production deployment, submit
 `https://signals.forwardfuture.ai/loop-library/sitemap.xml` in Google Search

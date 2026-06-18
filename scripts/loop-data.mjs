@@ -4,7 +4,8 @@ export const site = {
   baseUrl: "https://signals.forwardfuture.ai/loop-library/",
   description:
     "Practical AI agent workflows for engineering, research, editorial work, evaluation, and operations.",
-  updated: "2026-06-17",
+  updated: "2026-06-18",
+  socialImageVersion: "20260618",
 };
 
 export const loops = [

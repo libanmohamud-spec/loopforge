@@ -2,5 +2,7 @@
 /.herenow/
 site/.herenow/state.json
 node_modules/
+__pycache__/
+*.py[cod]
 worker/.dev.vars
 worker/.wrangler/
