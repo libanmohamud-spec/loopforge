@@ -5,7 +5,7 @@ description: Find, compare, adapt, and design repeatable AI-agent loops with exp
 
 # Loop Library
 
-Help the user reuse a published Forward Future loop when one fits. Otherwise,
+Help the user reuse a published Loop Library loop when one fits. Otherwise,
 adapt the closest loop or design a new one through a focused interview. Treat a
 loop as a feedback system with terminal states, not as permission for endless
 autonomy.

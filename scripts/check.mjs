@@ -159,6 +159,8 @@ assert(requestedConceptSlugs.every((slug) => slugs.has(slug)));
 assert.deepEqual(loopDirectories.sort(), [...slugs].sort());
 assert.equal(skillCatalog, renderSkillCatalog());
 assert(skillSource.startsWith("---\nname: loop-library\ndescription:"));
+assert(skillSource.includes("reuse a published Loop Library loop"));
+assert(!skillSource.includes("published Forward Future loop"));
 assert(skillSource.includes("## Run the design interview"));
 assert(skillSource.includes("## Deliver the loop"));
 assert(skillInterface.includes('display_name: "Loop Library"'));
