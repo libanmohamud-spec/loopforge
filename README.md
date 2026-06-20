@@ -130,6 +130,7 @@ node --check scripts/build-social-images.mjs
 node --check site/script.js
 node --check scripts/build-loop-pages.mjs
 node --check scripts/loop-data.mjs
+node --check scripts/validate-loop-data.mjs
 node scripts/audit-seo-geo.mjs
 node scripts/check.mjs
 npm --prefix worker run check

@@ -1,3 +1,5 @@
+import { validateLoopData } from "./validate-loop-data.mjs";
+
 export const site = {
   name: "Loop Library",
   publisher: "Forward Future",
@@ -1708,3 +1710,5 @@ export const loops = [
     related: ["boeing-747-benchmark", "full-product-evaluation-loop"],
   },
 ];
+
+validateLoopData(loops);

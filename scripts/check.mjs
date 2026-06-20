@@ -17,6 +17,7 @@ import {
   renderCatalogMarkdown,
 } from "./build-skill-catalog.mjs";
 import { escapeJsonForHtmlScript } from "./html-script-utils.mjs";
+import { validateLoopData } from "./validate-loop-data.mjs";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const siteRoot = path.join(root, "site");
@@ -128,6 +129,15 @@ function pngSize(buffer) {
 
 function wordCount(value) {
   return value.trim().split(/\s+/).length;
+}
+
+function formatDate(value) {
+  return new Intl.DateTimeFormat("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+    timeZone: "UTC",
+  }).format(new Date(`${value}T00:00:00Z`));
 }
 
 assert(structuredDataMatch);
@@ -263,6 +273,12 @@ assert.deepEqual(
 assert(loops.every((loop) => !Object.hasOwn(loop, "type")));
 assert(loops.every((loop) => !Object.hasOwn(loop, "typeSlug")));
 assert(requestedConceptSlugs.every((slug) => slugs.has(slug)));
+const invalidRelatedLoops = structuredClone(loops);
+invalidRelatedLoops.at(-1).related = ["missing-review-fixture"];
+assert.throws(
+  () => validateLoopData(invalidRelatedLoops),
+  /axelrod-subagent-arena-loop references unknown related loop: missing-review-fixture/,
+);
 for (const [slug, anchors] of submissionPromptAnchors) {
   const prompt = loopBySlug.get(slug)?.prompt ?? "";
   const normalizedPrompt = prompt.toLowerCase();
@@ -282,6 +298,7 @@ assert.equal(publicCatalogJsonSource, renderCatalogJson());
 assert.equal(publicCatalog.schemaVersion, catalogSchemaVersion);
 assert.equal(publicCatalog.name, siteMeta.name);
 assert.equal(publicCatalog.publisher, siteMeta.publisher);
+assert.equal(publicCatalog.description, siteMeta.description);
 assert.equal(publicCatalog.url, siteMeta.baseUrl);
 assert.equal(publicCatalog.catalogUrl, `${siteMeta.baseUrl}catalog.json`);
 assert.equal(publicCatalog.markdownUrl, `${siteMeta.baseUrl}catalog.md`);
@@ -378,6 +395,16 @@ for (const [index, loop] of loops.entries()) {
     catalogLoop.related.map(({ slug }) => slug),
     loop.related,
   );
+  assert.deepEqual(
+    catalogLoop.related.map(({ title }) => title),
+    loop.related.map((relatedSlug) => loopBySlug.get(relatedSlug).title),
+  );
+  assert.deepEqual(
+    catalogLoop.related.map(({ url: relatedUrl }) => relatedUrl),
+    loop.related.map(
+      (relatedSlug) => `${siteMeta.baseUrl}loops/${relatedSlug}/`,
+    ),
+  );
   assert.equal(catalogLoop.sourceUrl, loop.sourceUrl);
   assert(loop.related.every((relatedSlug) => slugs.has(relatedSlug)));
   assert(html.includes(loop.title));
@@ -409,6 +436,14 @@ for (const [index, loop] of loops.entries()) {
   );
   assert(html.includes(homepageHref));
   assert(page.includes(`<title>${escapeHtml(loop.seoTitle)}</title>`));
+  assert(
+    page.includes(
+      `<meta name="description" content="${escapeHtml(loop.description)}"`,
+    ),
+  );
+  assert(
+    page.includes(`<meta name="author" content="${escapeHtml(loop.author)}"`),
+  );
   assert(page.includes(`<link rel="canonical" href="${url}"`));
   assert(
     page.includes(
@@ -428,6 +463,16 @@ for (const [index, loop] of loops.entries()) {
   assert(
     page.includes(
       `<meta property="og:image:alt" content="${escapeHtml(imageAlt)}"`,
+    ),
+  );
+  assert(
+    page.includes(
+      `<meta property="article:published_time" content="${loop.published}"`,
+    ),
+  );
+  assert(
+    page.includes(
+      `<meta property="article:modified_time" content="${loop.modified}"`,
     ),
   );
   assert(page.includes('<meta name="twitter:card" content="summary_large_image"'));
@@ -459,6 +504,16 @@ for (const [index, loop] of loops.entries()) {
   assert(!page.includes(`<p class="eyebrow">${loop.categoryLabel}</p>`));
   assert(page.includes("<dt>Published</dt>"));
   assert(page.includes("<dt>Updated</dt>"));
+  assert(
+    page.includes(
+      `<time datetime="${loop.published}">${escapeHtml(formatDate(loop.published))}</time>`,
+    ),
+  );
+  assert(
+    page.includes(
+      `<time datetime="${loop.modified}">${escapeHtml(formatDate(loop.modified))}</time>`,
+    ),
+  );
   assert(page.includes("Use this when"));
   assert(page.includes("How to run it"));
   assert(page.includes("Why it works"));
@@ -490,13 +545,51 @@ for (const [index, loop] of loops.entries()) {
   const article = pageStructuredData["@graph"].find(
     (item) => item["@type"] === "Article",
   );
+  assert(article);
+
+  const author = article.author;
+  const relatedLinkMatches = [
+    ...page.matchAll(
+      /<a class="related-loop-link" href="\.\.\/([^/]+)\/">\s*([^<]+?)\s*<\/a>/g,
+    ),
+  ];
 
   assert.equal(article.url, url);
   assert.equal(article.headline, loop.title);
+  assert.equal(article.description, loop.description);
+  assert.equal(article.mainEntityOfPage, url);
+  assert.equal(article.datePublished, loop.published);
   assert.equal(article.dateModified, loop.modified);
+  assert.equal(article.articleSection, loop.categoryLabel);
+  assert.deepEqual(article.keywords, loop.keywords);
   assert.equal(article.image.url, imageUrl);
   assert.equal(article.image.width, 1200);
   assert.equal(article.image.height, 630);
+  assert.equal(author["@type"], "Person");
+  assert.equal(author.name, loop.author.split(" / ")[0]);
+  if (loop.author.includes(" / ")) {
+    assert.deepEqual(author.affiliation, {
+      "@id": `${siteMeta.baseUrl}#organization`,
+    });
+  } else {
+    assert.equal(author.affiliation, undefined);
+  }
+  assert.deepEqual(article.publisher, {
+    "@id": `${siteMeta.baseUrl}#organization`,
+  });
+  assert.deepEqual(article.isPartOf, {
+    "@id": `${siteMeta.baseUrl}#collection`,
+  });
+  assert.deepEqual(
+    relatedLinkMatches.map((match) => match[1]),
+    loop.related,
+  );
+  assert.deepEqual(
+    relatedLinkMatches.map((match) => match[2].trim()),
+    loop.related.map((relatedSlug) =>
+      escapeHtml(loopBySlug.get(relatedSlug).title),
+    ),
+  );
   if (loop.sourceUrl) {
     assert.equal(article.isBasedOn, loop.sourceUrl);
     assert(

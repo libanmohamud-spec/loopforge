@@ -51,6 +51,7 @@ jobs:
           node --check scripts/build-social-images.mjs
           node --check scripts/audit-seo-geo.mjs
           node --check scripts/loop-data.mjs
+          node --check scripts/validate-loop-data.mjs
           node --check site/script.js
           node scripts/audit-seo-geo.mjs
           node scripts/check.mjs
