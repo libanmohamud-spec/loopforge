@@ -7,7 +7,7 @@ export const site = {
   description:
     "Practical AI agent workflows for engineering, research, editorial work, evaluation, and operations.",
   updated: "2026-06-20",
-  socialImageVersion: "20260620-8",
+  socialImageVersion: "20260620-9",
   socialImageExtension: "png",
   socialImageMimeType: "image/png",
 };
@@ -1815,12 +1815,10 @@ export const loops = [
       "A reusable workflow for turning one proven artifact into a transferable skill, playbook, or procedure and validating it on a second case.",
     categoryLabel: "AI workflow design workflow",
     author: "Hiten Shah (@hnshah)",
-    sourceUrl:
-      "https://docs.google.com/document/d/1PjkOSfGaww1k_NJjswovfCdSHl31w8sxIEzXilU92gg/edit?tab=t.w2loqc95b1ex",
     published: "2026-06-20",
     modified: "2026-06-20",
     prompt:
-      "Turn [artifact] into a reusable skill, playbook, or procedure. Record evidence that the artifact succeeded and define quality criteria. Extract durable decisions, sequence, checks, and failure-avoidance patterns—not one-off context or surface style. Remove sensitive material. Have an independent reviewer apply the method to a fresh real second case; mark hypothetical testing provisional. Revise at most twice. Stop when it meets the criteria without the source, or report not generalizable. Return the method, evidence, revisions, limits, and attribution.",
+      "Turn [artifact] into a skill, playbook, or procedure. Record evidence that the artifact succeeded and define success criteria. Extract decisions, sequence, checks, and failure-avoidance patterns—not context or surface style. Remove sensitive material. Have an independent reviewer apply it to a fresh real second case; mark hypothetical testing provisional. Revise at most twice. Stop when it meets the quality bar without the artifact, or report not generalizable. Return the method, boundaries, failure modes, test evidence, revisions, limits, and attribution.",
     verifyTitle:
       "The extracted method succeeds on a fresh second case without the original artifact.",
     verifyDetail:
@@ -1837,6 +1835,41 @@ export const loops = [
       "Strong outputs often get saved while the method that produced them disappears. Extracting the decisions and checks makes that knowledge reusable, while a fresh second-case test distinguishes a transferable process from imitation of one polished example.",
     note:
       "Do not infer success from polish alone, copy confidential material, or treat a hypothetical test as final proof. Preserve attribution, define the quality bar before extraction, and stop honestly when hidden context makes the method impossible to generalize.",
+    contributorPlaybook: {
+      whenNotToUse: [
+        "The artifact is mediocre, unclear, or lacks credible evidence that it succeeded.",
+        "Essential context is hidden or unavailable, so the method cannot be recovered responsibly.",
+        "The artifact is too narrow to generalize beyond its original case.",
+        "A summary is sufficient and no reusable method is needed.",
+        "The goal is to imitate surface style rather than understand the process behind it.",
+      ],
+      expectedOutputs: [
+        "Artifact summary",
+        "Extracted method",
+        "Reusable skill, playbook, or procedure",
+        "Usage boundaries",
+        "Step-by-step procedure",
+        "Quality standards",
+        "Failure modes",
+        "Second-case test",
+        "Revisions made after testing",
+        "Final reusable version",
+      ],
+      implementationGuidance: [
+        "Prompt or workflow: preserve the sequence, checks, and escalation logic.",
+        "Page or memo: preserve the argument structure, evidence logic, and clarity standards.",
+        "Pull request or specification: preserve scope control, proof requirements, and handoff quality.",
+        "Research artifact: preserve source discipline, synthesis method, and conclusion thresholds.",
+      ],
+      reviewerHandoff: [
+        "Original artifact: what it was and what it accomplished.",
+        "Why it worked: the decisions or method that made it strong.",
+        "What was extracted: the reusable skill, playbook, or procedure.",
+        "How it was tested: the fresh second case used for validation.",
+        "What changed: revisions made after the test.",
+        "Limits or follow-ups: where the method may not generalize.",
+      ],
+    },
     keywords: [
       "artifact to skill",
       "knowledge extraction workflow",

@@ -113,6 +113,9 @@ export function renderCatalogJson() {
         steps: loop.steps,
         why: loop.why,
         implementationNote: loop.note,
+        ...(loop.contributorPlaybook
+          ? { contributorPlaybook: loop.contributorPlaybook }
+          : {}),
         keywords: loop.keywords,
         related: loop.related.map((slug) => {
           const relatedLoop = loopBySlug.get(slug);
@@ -123,7 +126,6 @@ export function renderCatalogJson() {
             url: `${site.baseUrl}loops/${slug}/`,
           };
         }),
-        ...(loop.sourceUrl ? { sourceUrl: loop.sourceUrl } : {}),
       };
     }),
   };

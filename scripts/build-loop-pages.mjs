@@ -1,9 +1,9 @@
-import { mkdir, rm, writeFile } from "node:fs/promises";
+import { mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 import path from "node:path";
 
 import { escapeJsonForHtmlScript } from "./html-script-utils.mjs";
-import { loops, site } from "./loop-data.mjs";
+import { getLoopCategory, loops, site } from "./loop-data.mjs";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const outputRoot = path.join(root, "site");
@@ -39,6 +39,46 @@ function socialImageUrl(loop) {
   return `${site.baseUrl}assets/social/${loop.slug}-${site.socialImageVersion}.${site.socialImageExtension}`;
 }
 
+async function syncHomepagePublicationDates() {
+  const homepagePath = path.join(outputRoot, "index.html");
+  let homepage = await readFile(homepagePath, "utf8");
+
+  for (const loop of loops) {
+    const loopHref = `href="./loops/${loop.slug}/"`;
+    const hrefIndex = homepage.indexOf(loopHref);
+    const rowStart = homepage.lastIndexOf("<tr", hrefIndex);
+    const rowTagEnd = homepage.indexOf(">", rowStart);
+
+    if (hrefIndex < 0 || rowStart < 0 || rowTagEnd < 0) {
+      throw new Error(`Could not find the homepage row for ${loop.slug}.`);
+    }
+
+    const rowTag = homepage.slice(rowStart, rowTagEnd + 1);
+    const categoryAttribute = `data-category="${getLoopCategory(loop).slug}"`;
+    const publishedAttribute = `data-published="${loop.published}"`;
+    const normalizedRowTag = rowTag.replace(
+      /\n\s*data-published="[^"]*"/,
+      "",
+    );
+
+    if (!normalizedRowTag.includes(categoryAttribute)) {
+      throw new Error(`Homepage category drift for ${loop.slug}.`);
+    }
+
+    const updatedRowTag = normalizedRowTag.replace(
+      categoryAttribute,
+      `${categoryAttribute}\n                ${publishedAttribute}`,
+    );
+
+    homepage =
+      homepage.slice(0, rowStart) +
+      updatedRowTag +
+      homepage.slice(rowTagEnd + 1);
+  }
+
+  await writeFile(homepagePath, homepage);
+}
+
 function shareActions(loop, url) {
   const postText = `Try "${loop.title}" from the Loop Library: ${loop.summary}`;
 
@@ -70,6 +110,58 @@ function relatedLinks(loop) {
                 </a>`,
     )
     .join("");
+}
+
+function playbookList(items) {
+  return items
+    .map((item) => `                  <li>${escapeHtml(item)}</li>`)
+    .join("\n");
+}
+
+function contributorPlaybook(loop) {
+  const playbook = loop.contributorPlaybook;
+
+  if (!playbook) {
+    return "";
+  }
+
+  return `
+          <details class="detail-more contributor-playbook">
+            <summary>
+              <span>Contributor playbook</span>
+              <small>Boundaries, required outputs, implementation guidance, and reviewer handoff</small>
+            </summary>
+
+            <div class="detail-more-body contributor-playbook-body">
+              <section aria-labelledby="contributor-when-not-to-use">
+                <h2 id="contributor-when-not-to-use">Do not use this when</h2>
+                <ul class="contributor-playbook-list">
+${playbookList(playbook.whenNotToUse)}
+                </ul>
+              </section>
+
+              <section aria-labelledby="contributor-expected-outputs">
+                <h2 id="contributor-expected-outputs">Required outputs</h2>
+                <ul class="contributor-playbook-list contributor-playbook-list--grid">
+${playbookList(playbook.expectedOutputs)}
+                </ul>
+              </section>
+
+              <section aria-labelledby="contributor-implementation-guidance">
+                <h2 id="contributor-implementation-guidance">Match the method to the artifact</h2>
+                <ul class="contributor-playbook-list">
+${playbookList(playbook.implementationGuidance)}
+                </ul>
+              </section>
+
+              <section aria-labelledby="contributor-reviewer-handoff">
+                <h2 id="contributor-reviewer-handoff">Reviewer handoff</h2>
+                <ul class="contributor-playbook-list">
+${playbookList(playbook.reviewerHandoff)}
+                </ul>
+              </section>
+            </div>
+          </details>`;
 }
 
 function hereNowCredit(assetPath, modifier) {
@@ -142,7 +234,6 @@ function structuredData(loop) {
           dateModified: loop.modified,
           articleSection: loop.categoryLabel,
           keywords: loop.keywords,
-          ...(loop.sourceUrl ? { isBasedOn: loop.sourceUrl } : {}),
           image: {
             "@type": "ImageObject",
             url: imageUrl,
@@ -248,11 +339,11 @@ function renderLoopPage(loop) {
     <link rel="alternate" type="text/plain" title="${escapeHtml(site.name)} plain-text catalog" href="${escapeHtml(site.baseUrl)}catalog.txt" />
     <link rel="help" href="${escapeHtml(site.baseUrl)}agents/" />
     <link rel="icon" type="image/png" href="../../assets/favicon.png" />
-    <link rel="stylesheet" href="../../styles.css?v=20260620-primary-nav" />
+    <link rel="stylesheet" href="../../styles.css?v=20260620-newest-first" />
     <script type="application/ld+json">
 ${structuredData(loop)}
     </script>
-    <script src="../../script.js?v=20260620-primary-nav" defer></script>
+    <script src="../../script.js?v=20260620-newest-first" defer></script>
     <title>${escapeHtml(loop.seoTitle)}</title>
   </head>
   <body>
@@ -313,11 +404,7 @@ ${structuredData(loop)}
           <h1>${escapeHtml(loop.title)}</h1>
           <p class="detail-lede">${escapeHtml(loop.description)}</p>
           <p class="detail-byline">
-            Contributed by <strong>${escapeHtml(loop.author)}</strong>${
-              loop.sourceUrl
-                ? ` · <a class="detail-source-link" href="${escapeHtml(loop.sourceUrl)}" target="_blank" rel="noopener noreferrer">Source</a>`
-                : ""
-            }
+            Contributed by <strong>${escapeHtml(loop.author)}</strong>
           </p>
           ${shareActions(loop, url)}
         </header>
@@ -392,6 +479,7 @@ ${relatedLinks(loop)}
               </nav>
             </div>
           </details>
+${contributorPlaybook(loop)}
         </div>
       </article>
     </main>
@@ -484,6 +572,7 @@ ${loops
 `;
 }
 
+await syncHomepagePublicationDates();
 await rm(path.join(outputRoot, "loops"), { recursive: true, force: true });
 
 for (const loop of loops) {

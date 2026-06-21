@@ -69,11 +69,32 @@ const toast = document.querySelector("#toast");
 const PAGE_SIZE = 25;
 
 const loopTableBody = document.querySelector(".loop-table tbody");
-loopRows.sort(
-  (a, b) =>
-    Number(b.dataset.featured === "true") -
-    Number(a.dataset.featured === "true"),
+const loopRowPositions = new Map(
+  loopRows.map((row, index) => [row, index]),
 );
+loopRows.sort((a, b) => {
+  const featuredDifference =
+    Number(b.dataset.featured === "true") -
+    Number(a.dataset.featured === "true");
+
+  if (featuredDifference !== 0) {
+    return featuredDifference;
+  }
+
+  if (a.dataset.featured === "true") {
+    return 0;
+  }
+
+  const publishedDifference = b.dataset.published.localeCompare(
+    a.dataset.published,
+  );
+
+  if (publishedDifference !== 0) {
+    return publishedDifference;
+  }
+
+  return loopRowPositions.get(b) - loopRowPositions.get(a);
+});
 
 if (loopTableBody) {
   loopRows.forEach((row) => loopTableBody.append(row));

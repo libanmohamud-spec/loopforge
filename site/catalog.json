@@ -794,8 +794,7 @@
           "title": "The quality streak loop",
           "url": "https://signals.forwardfuture.ai/loop-library/loops/quality-streak-loop/"
         }
-      ],
-      "sourceUrl": "https://docs.google.com/document/d/1PjkOSfGaww1k_NJjswovfCdSHl31w8sxIEzXilU92gg/edit?tab=t.0"
+      ]
     },
     {
       "number": "017",
@@ -842,8 +841,7 @@
           "title": "The quality streak loop",
           "url": "https://signals.forwardfuture.ai/loop-library/loops/quality-streak-loop/"
         }
-      ],
-      "sourceUrl": "https://www.agentled.ai/en/blog/post/beginners-buy-ai-automations-experts-build-ai-deployment-loops"
+      ]
     },
     {
       "number": "018",
@@ -890,8 +888,7 @@
           "title": "The post-release baseline loop",
           "url": "https://signals.forwardfuture.ai/loop-library/loops/post-release-baseline-loop/"
         }
-      ],
-      "sourceUrl": "https://www.jellypod.com/mcp"
+      ]
     },
     {
       "number": "019",
@@ -938,8 +935,7 @@
           "title": "The stale-safe batch release loop",
           "url": "https://signals.forwardfuture.ai/loop-library/loops/stale-safe-batch-release-loop/"
         }
-      ],
-      "sourceUrl": "https://github.com/lukaskucinski/clodex"
+      ]
     },
     {
       "number": "020",
@@ -986,8 +982,7 @@
           "title": "The docs sweep",
           "url": "https://signals.forwardfuture.ai/loop-library/loops/overnight-docs-sweep/"
         }
-      ],
-      "sourceUrl": "https://github.com/lSAAGl/loop-harness"
+      ]
     },
     {
       "number": "021",
@@ -1034,8 +1029,7 @@
           "title": "The full product evaluation loop",
           "url": "https://signals.forwardfuture.ai/loop-library/loops/full-product-evaluation-loop/"
         }
-      ],
-      "sourceUrl": "https://x.com/victormustar/status/2064449741685968967"
+      ]
     },
     {
       "number": "022",
@@ -1082,8 +1076,7 @@
           "title": "The sub-50 ms page-load loop",
           "url": "https://signals.forwardfuture.ai/loop-library/loops/sub-50ms-page-load-loop/"
         }
-      ],
-      "sourceUrl": "https://github.com/0xtigerclaw/war_loops"
+      ]
     },
     {
       "number": "023",
@@ -1318,8 +1311,7 @@
           "title": "The Loop Harness verification loop",
           "url": "https://signals.forwardfuture.ai/loop-library/loops/loop-harness-verification-loop/"
         }
-      ],
-      "sourceUrl": "https://github.com/inferencegod/autonomy-loop"
+      ]
     },
     {
       "number": "028",
@@ -1366,8 +1358,7 @@
           "title": "The quality streak loop",
           "url": "https://signals.forwardfuture.ai/loop-library/loops/quality-streak-loop/"
         }
-      ],
-      "sourceUrl": "https://github.com/ranvier2d2/skills-share/tree/main/skills/goal-planner-codex"
+      ]
     },
     {
       "number": "029",
@@ -1414,8 +1405,7 @@
           "title": "The full product evaluation loop",
           "url": "https://signals.forwardfuture.ai/loop-library/loops/full-product-evaluation-loop/"
         }
-      ],
-      "sourceUrl": "https://github.com/agent0ai/revolve"
+      ]
     },
     {
       "number": "030",
@@ -1462,8 +1452,7 @@
           "title": "The stale-safe batch release loop",
           "url": "https://signals.forwardfuture.ai/loop-library/loops/stale-safe-batch-release-loop/"
         }
-      ],
-      "sourceUrl": "https://github.com/steipete/agent-scripts/blob/main/skills/maintainer-orchestrator/SKILL.md"
+      ]
     },
     {
       "number": "031",
@@ -1651,8 +1640,7 @@
           "title": "The devil's-advocate loop",
           "url": "https://signals.forwardfuture.ai/loop-library/loops/devils-advocate-design-loop/"
         }
-      ],
-      "sourceUrl": "https://github.com/donnfelker/loop-skills"
+      ]
     },
     {
       "number": "035",
@@ -1699,8 +1687,7 @@
           "title": "The ticket-to-PR-ready loop",
           "url": "https://signals.forwardfuture.ai/loop-library/loops/ticket-to-pr-ready-loop/"
         }
-      ],
-      "sourceUrl": "https://github.com/michaelpersonal/goal-forge"
+      ]
     },
     {
       "number": "036",
@@ -1747,8 +1734,7 @@
           "title": "The full product evaluation loop",
           "url": "https://signals.forwardfuture.ai/loop-library/loops/full-product-evaluation-loop/"
         }
-      ],
-      "sourceUrl": "https://github.com/hcassar93/ui-ux-score-loop"
+      ]
     },
     {
       "number": "037",
@@ -1795,8 +1781,7 @@
           "title": "The pixel-safe CSS trim loop",
           "url": "https://signals.forwardfuture.ai/loop-library/loops/pixel-safe-css-trim-loop/"
         }
-      ],
-      "sourceUrl": "https://github.com/Christian-Katzmann"
+      ]
     },
     {
       "number": "038",
@@ -1843,8 +1828,7 @@
           "title": "The UI/UX Score Loop",
           "url": "https://signals.forwardfuture.ai/loop-library/loops/ui-ux-score-loop/"
         }
-      ],
-      "sourceUrl": "https://github.com/Christian-Katzmann"
+      ]
     },
     {
       "number": "039",
@@ -2032,8 +2016,7 @@
           "title": "The full product evaluation loop",
           "url": "https://signals.forwardfuture.ai/loop-library/loops/full-product-evaluation-loop/"
         }
-      ],
-      "sourceUrl": "https://github.com/sikkha/axelrod-loop-engineering"
+      ]
     },
     {
       "number": "043",
@@ -2148,7 +2131,7 @@
       "modified": "2026-06-20",
       "description": "A reusable workflow for turning one proven artifact into a transferable skill, playbook, or procedure and validating it on a second case.",
       "useWhen": "Use this when a completed artifact has evidence of success, appears to contain a repeatable method, and similar work is likely to recur.",
-      "prompt": "Turn [artifact] into a reusable skill, playbook, or procedure. Record evidence that the artifact succeeded and define quality criteria. Extract durable decisions, sequence, checks, and failure-avoidance patterns—not one-off context or surface style. Remove sensitive material. Have an independent reviewer apply the method to a fresh real second case; mark hypothetical testing provisional. Revise at most twice. Stop when it meets the criteria without the source, or report not generalizable. Return the method, evidence, revisions, limits, and attribution.",
+      "prompt": "Turn [artifact] into a skill, playbook, or procedure. Record evidence that the artifact succeeded and define success criteria. Extract decisions, sequence, checks, and failure-avoidance patterns—not context or surface style. Remove sensitive material. Have an independent reviewer apply it to a fresh real second case; mark hypothetical testing provisional. Revise at most twice. Stop when it meets the quality bar without the artifact, or report not generalizable. Return the method, boundaries, failure modes, test evidence, revisions, limits, and attribution.",
       "verification": {
         "title": "The extracted method succeeds on a fresh second case without the original artifact.",
         "detail": "An independent reviewer applies the reusable version under criteria defined before extraction, and the second result meets the source artifact's demonstrated quality bar or the method is honestly marked provisional or not generalizable."
@@ -2161,6 +2144,41 @@
       ],
       "why": "Strong outputs often get saved while the method that produced them disappears. Extracting the decisions and checks makes that knowledge reusable, while a fresh second-case test distinguishes a transferable process from imitation of one polished example.",
       "implementationNote": "Do not infer success from polish alone, copy confidential material, or treat a hypothetical test as final proof. Preserve attribution, define the quality bar before extraction, and stop honestly when hidden context makes the method impossible to generalize.",
+      "contributorPlaybook": {
+        "whenNotToUse": [
+          "The artifact is mediocre, unclear, or lacks credible evidence that it succeeded.",
+          "Essential context is hidden or unavailable, so the method cannot be recovered responsibly.",
+          "The artifact is too narrow to generalize beyond its original case.",
+          "A summary is sufficient and no reusable method is needed.",
+          "The goal is to imitate surface style rather than understand the process behind it."
+        ],
+        "expectedOutputs": [
+          "Artifact summary",
+          "Extracted method",
+          "Reusable skill, playbook, or procedure",
+          "Usage boundaries",
+          "Step-by-step procedure",
+          "Quality standards",
+          "Failure modes",
+          "Second-case test",
+          "Revisions made after testing",
+          "Final reusable version"
+        ],
+        "implementationGuidance": [
+          "Prompt or workflow: preserve the sequence, checks, and escalation logic.",
+          "Page or memo: preserve the argument structure, evidence logic, and clarity standards.",
+          "Pull request or specification: preserve scope control, proof requirements, and handoff quality.",
+          "Research artifact: preserve source discipline, synthesis method, and conclusion thresholds."
+        ],
+        "reviewerHandoff": [
+          "Original artifact: what it was and what it accomplished.",
+          "Why it worked: the decisions or method that made it strong.",
+          "What was extracted: the reusable skill, playbook, or procedure.",
+          "How it was tested: the fresh second case used for validation.",
+          "What changed: revisions made after the test.",
+          "Limits or follow-ups: where the method may not generalize."
+        ]
+      },
       "keywords": [
         "artifact to skill",
         "knowledge extraction workflow",
@@ -2184,8 +2202,7 @@
           "title": "The prepare-a-new-project loop",
           "url": "https://signals.forwardfuture.ai/loop-library/loops/prepare-new-project-loop/"
         }
-      ],
-      "sourceUrl": "https://docs.google.com/document/d/1PjkOSfGaww1k_NJjswovfCdSHl31w8sxIEzXilU92gg/edit?tab=t.w2loqc95b1ex"
+      ]
     }
   ]
 }

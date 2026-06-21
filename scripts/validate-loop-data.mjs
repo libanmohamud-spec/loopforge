@@ -159,6 +159,34 @@ export function validateLoopData(loops) {
         `${label}.sourceUrl must be a valid HTTP URL.`,
       );
     }
+
+    if (Object.hasOwn(loop, "contributorPlaybook")) {
+      const playbook = loop.contributorPlaybook;
+      requireCondition(
+        playbook !== null &&
+          typeof playbook === "object" &&
+          !Array.isArray(playbook),
+        `${label}.contributorPlaybook must be an object.`,
+      );
+
+      for (const field of [
+        "whenNotToUse",
+        "expectedOutputs",
+        "implementationGuidance",
+        "reviewerHandoff",
+      ]) {
+        requireCondition(
+          Array.isArray(playbook[field]) && playbook[field].length > 0,
+          `${label}.contributorPlaybook.${field} must be a non-empty array.`,
+        );
+        playbook[field].forEach((item, itemIndex) =>
+          requireText(
+            item,
+            `${label}.contributorPlaybook.${field}[${itemIndex}]`,
+          ),
+        );
+      }
+    }
   });
 
   for (const field of ["slug", "title", "seoTitle", "description", "prompt"]) {

@@ -245,20 +245,24 @@ for (const [relativePath, html] of pages) {
       );
     }
 
-    if (loop.sourceUrl) {
-      if (!html.includes(`href="${loop.sourceUrl}"`) || !html.includes("isBasedOn")) {
-        addFinding(
-          "high",
-          "source citations",
-          "Contributed loop is missing its visible source link or isBasedOn schema.",
-          relativePath,
-        );
-      }
-    } else if (!pageText.includes(`Contributed by ${loop.author}`)) {
+    if (!pageText.includes(`Contributed by ${loop.author}`)) {
       addFinding(
         "medium",
-        "source citations",
-        "Original loop is missing visible contributor attribution.",
+        "contributor attribution",
+        "Published loop is missing visible contributor attribution.",
+        relativePath,
+      );
+    }
+
+    if (
+      html.includes('class="detail-source-link"') ||
+      html.includes("isBasedOn") ||
+      (loop.sourceUrl && html.includes(loop.sourceUrl))
+    ) {
+      addFinding(
+        "high",
+        "source privacy",
+        "Published loop exposes a source link.",
         relativePath,
       );
     }

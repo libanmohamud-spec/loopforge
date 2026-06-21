@@ -475,6 +475,10 @@ for (const [index, loop] of loops.entries()) {
   assert.deepEqual(catalogLoop.steps, loop.steps);
   assert.equal(catalogLoop.why, loop.why);
   assert.equal(catalogLoop.implementationNote, loop.note);
+  assert.deepEqual(
+    catalogLoop.contributorPlaybook,
+    loop.contributorPlaybook,
+  );
   assert.deepEqual(catalogLoop.keywords, loop.keywords);
   assert.deepEqual(
     catalogLoop.related.map(({ slug }) => slug),
@@ -490,7 +494,7 @@ for (const [index, loop] of loops.entries()) {
       (relatedSlug) => `${siteMeta.baseUrl}loops/${relatedSlug}/`,
     ),
   );
-  assert.equal(catalogLoop.sourceUrl, loop.sourceUrl);
+  assert.equal(catalogLoop.sourceUrl, undefined);
   assert(loop.related.every((relatedSlug) => slugs.has(relatedSlug)));
   assert(html.includes(loop.title));
   assert(normalizedHomepageRow.includes(loop.prompt));
@@ -501,6 +505,7 @@ for (const [index, loop] of loops.entries()) {
   );
   assert(!homepageRow.includes('class="cell-number"'));
   assert(homepageRow.includes(`data-category="${category.slug}"`));
+  assert(homepageRow.includes(`data-published="${loop.published}"`));
   assert(
     homepageRow.includes(
       `<span class="loop-category">${category.label}</span>`,
@@ -551,8 +556,8 @@ for (const [index, loop] of loops.entries()) {
     ),
   );
   assert(page.includes(`rel="help" href="${siteMeta.baseUrl}agents/"`));
-  assert(page.includes("../../styles.css?v=20260620-primary-nav"));
-  assert(page.includes("../../script.js?v=20260620-primary-nav"));
+  assert(page.includes("../../styles.css?v=20260620-newest-first"));
+  assert(page.includes("../../script.js?v=20260620-newest-first"));
   assert(page.includes(`<meta property="og:image" content="${imageUrl}"`));
   assert(page.includes(`<meta property="og:image:secure_url" content="${imageUrl}"`));
   assert(page.includes(`<meta property="og:image:type" content="${siteMeta.socialImageMimeType}"`));
@@ -616,6 +621,22 @@ for (const [index, loop] of loops.entries()) {
   assert(page.includes("How to run it"));
   assert(page.includes("Why it works"));
   assert(page.includes("Implementation note"));
+  if (loop.contributorPlaybook) {
+    assert(page.includes('class="detail-more contributor-playbook"'));
+    assert(page.includes("Contributor playbook"));
+    assert(page.includes("Do not use this when"));
+    assert(page.includes("Required outputs"));
+    assert(page.includes("Match the method to the artifact"));
+    assert(page.includes("Reviewer handoff"));
+    assert(
+      Object.values(loop.contributorPlaybook)
+        .flat()
+        .every((item) => page.includes(escapeHtml(item))),
+    );
+  } else {
+    assert.equal(catalogLoop.contributorPlaybook, undefined);
+    assert(!page.includes('class="detail-more contributor-playbook"'));
+  }
   assert(!page.includes("<h2>Topics</h2>"));
   assert(page.includes("Related loops"));
   assert(!page.includes("<dt>Type</dt>"));
@@ -695,17 +716,9 @@ for (const [index, loop] of loops.entries()) {
       escapeHtml(loopBySlug.get(relatedSlug).title),
     ),
   );
-  if (loop.sourceUrl) {
-    assert.equal(article.isBasedOn, loop.sourceUrl);
-    assert(
-      page.includes(
-        `<a class="detail-source-link" href="${escapeHtml(loop.sourceUrl)}" target="_blank" rel="noopener noreferrer">Source</a>`,
-      ),
-    );
-  } else {
-    assert.equal(article.isBasedOn, undefined);
-    assert(!page.includes('class="detail-source-link"'));
-  }
+  assert.equal(article.isBasedOn, undefined);
+  assert(!page.includes('class="detail-source-link"'));
+  assert(!loop.sourceUrl || !page.includes(loop.sourceUrl));
   assert(sitemap.includes(`<loc>${url}</loc>`));
   assert(sitemap.includes(`<lastmod>${loop.modified}</lastmod>`));
   assert(feed.includes(`<id>${url}</id>`));
@@ -815,8 +828,10 @@ assert(!html.includes('data-type='));
 assert(!html.includes('class="cell-type"'));
 assert(!html.includes("type-badge"));
 assert(!html.includes('<th scope="col">Type</th>'));
-assert(html.includes("./styles.css?v=20260620-primary-nav"));
-assert(html.includes("./script.js?v=20260620-primary-nav"));
+assert(html.includes("./styles.css?v=20260620-newest-first"));
+assert(html.includes("./script.js?v=20260620-newest-first"));
+assert(script.includes("const publishedDifference = b.dataset.published.localeCompare("));
+assert(script.includes("return loopRowPositions.get(b) - loopRowPositions.get(a);"));
 const homepagePostText =
   "Find Loops and create your own - Loop Library";
 assert(html.includes('class="share-actions" aria-label="Share Loop Library"'));
@@ -877,8 +892,8 @@ assert.equal(
   (learnHtml.match(/href="https:\/\/here\.now\/r\/signals"/g) || []).length,
   2,
 );
-assert(learnHtml.includes("../styles.css?v=20260620-article-layout"));
-assert(learnHtml.includes("../script.js?v=20260620-primary-nav"));
+assert(learnHtml.includes("../styles.css?v=20260620-newest-first"));
+assert(learnHtml.includes("../script.js?v=20260620-newest-first"));
 assert(learnHtml.includes("How agent loops work"));
 assert(learnHtml.includes('<meta name="robots" content="index, follow"'));
 assert(learnHtml.includes("What makes a loop useful"));
@@ -926,8 +941,8 @@ assert(agentHtml.includes("npx skills add Forward-Future/loop-library --skill lo
 assert(agentHtml.includes('<meta name="robots" content="index, follow"'));
 assert(agentHtml.includes(`href="${siteMeta.baseUrl}catalog.json"`));
 assert(agentHtml.includes(`href="${siteMeta.baseUrl}llms.txt"`));
-assert(agentHtml.includes("../styles.css?v=20260620-article-layout"));
-assert(agentHtml.includes("../script.js?v=20260620-primary-nav"));
+assert(agentHtml.includes("../styles.css?v=20260620-newest-first"));
+assert(agentHtml.includes("../script.js?v=20260620-newest-first"));
 assert(html.includes("Repeatable AI Agent Workflows"));
 assert(html.includes('rel="sitemap"'));
 assert(html.includes(`href="${siteMeta.baseUrl}catalog.json"`));
