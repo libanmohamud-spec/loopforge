@@ -94,10 +94,10 @@ URL above.
 ## 010 — [The full product evaluation loop](https://signals.forwardfuture.ai/loop-library/loops/full-product-evaluation-loop/)
 
 - Category: Evaluation
-- Use when: Use this for an end-to-end product evaluation when quality must be measured across the full feature set rather than a narrow regression or a few hand-picked examples.
-- Prompt: Create [N] realistic scenarios covering every major capability. Before testing, define clear success criteria and choose a consistent evaluation method, such as pass/fail checks or a scoring rubric. Run every scenario under the same conditions and record evidence for each outcome. Fix the underlying cause of anything that does not meet the criteria, rerun the affected scenarios, and then rerun the complete set. Continue until every scenario meets the original quality bar.
-- Verify: Every one of the [N] scenarios meets the defined quality bar. The final evaluated run covers every major capability under the original conditions.
-- Keywords: AI product evaluation, full product testing, response scoring, quality benchmark, feature coverage
+- Use when: Use this for an exhaustive, end-to-end application QA pass when a production-like local environment and complete interactive-surface coverage matter more than a narrow regression or sample of major features.
+- Prompt: Build sanitized, production-scale local data under production-like settings. Inventory every user-facing feature, role, route, button, input, modal, state, and workflow; define documented acceptance criteria and finite risk-based edge cases for each. Test as a real user, logging every bug with reproduction evidence. Review findings for shared causes and dependencies; implement coherent fixes with regression tests, then rerun the full inventory. Stop at a clean pass or blocked handoff. Ask before production, sensitive data, or destructive actions.
+- Verify: Every inventoried product surface meets its documented acceptance criteria. The final full regression run covers every inventoried surface and its finite risk-based edge cases in the production-like local environment, with each reproducible bug fixed and backed by evidence.
+- Keywords: production-grade QA, production-like local testing, exhaustive product testing, real user testing, UI control coverage, edge case testing, bug documentation, full regression testing
 - Related: [The quality streak loop](https://signals.forwardfuture.ai/loop-library/loops/quality-streak-loop/), [The production data cleanup loop](https://signals.forwardfuture.ai/loop-library/loops/production-data-cleanup-loop/)
 
 ## 011 — [The test-suite speed loop](https://signals.forwardfuture.ai/loop-library/loops/test-suite-speed-loop/)
