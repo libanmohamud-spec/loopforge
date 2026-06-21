@@ -1267,16 +1267,13 @@ code {
 
 .detail-byline {
   margin-bottom: 0;
-  color: var(--muted);
-  font-family: var(--font-mono);
-  font-size: 0.62rem;
-  font-weight: 600;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
+  color: var(--ink);
+  font-size: 0.95rem;
+  line-height: 1.5;
 }
 
 .detail-byline strong {
-  color: var(--ink);
+  font-weight: 700;
 }
 
 .detail-stack {

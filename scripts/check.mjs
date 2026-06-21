@@ -630,7 +630,7 @@ for (const [index, loop] of loops.entries()) {
   assert(page.includes(loop.description));
   assert(page.includes(escapeHtml(loop.prompt)));
   assert(page.includes(`<p class="eyebrow">Loop ${loop.number}</p>`));
-  assert(page.includes(`Contributed by <strong>${loop.author}</strong>`));
+  assert(page.includes(`By <strong>${loop.author}</strong>`));
   assert(page.includes(escapeHtml(loop.verifyTitle)));
   assert(page.includes(escapeHtml(loop.verifyDetail)));
   assert(page.includes(escapeHtml(loop.useWhen)));
