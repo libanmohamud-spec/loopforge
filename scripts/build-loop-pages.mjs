@@ -404,7 +404,7 @@ ${structuredData(loop)}
           <h1>${escapeHtml(loop.title)}</h1>
           <p class="detail-lede">${escapeHtml(loop.description)}</p>
           <p class="detail-byline">
-            Contributed by <strong>${escapeHtml(loop.author)}</strong>
+            By <strong>${escapeHtml(loop.author)}</strong>
           </p>
           ${shareActions(loop, url)}
         </header>
