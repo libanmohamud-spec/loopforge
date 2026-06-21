@@ -1,22 +1,25 @@
 # Loop Library
 
-The Loop Library skill is an installable guide for your AI agent. Tell it what
-you want to get done and it can find a published loop, audit and repair an
-existing one, adapt one to your situation, or help you design a new one through
-a short conversation.
+Loop Library has two separate but related parts in this repository:
 
-Loop Library is a collection of reusable ways to get better work from AI
-agents. Each loop tells an agent what to do, how to check its work, what to try
-next, and when to stop.
+| Part | What it is | Where it lives |
+| --- | --- | --- |
+| **Loop Library website** | The public catalog where people and agents can browse published loops, read them, and copy their prompts. No installation is required. | [Live website](https://signals.forwardfuture.ai/loop-library/) · source in [`site/`](site/) and [`scripts/loop-data.mjs`](scripts/loop-data.mjs) |
+| **Loop Library skill** | An optional installable guide that helps an AI agent find, audit, repair, adapt, or design loops through conversation. It uses the website's live catalog when recommending published loops. | source in [`skills/loop-library/`](skills/loop-library/) |
 
-[Browse the Loop Library](https://signals.forwardfuture.ai/loop-library/)
+The website is the library; the skill is a companion way to work with it. You
+can browse or give an agent the website without installing the skill. Installing
+the skill adds the guided workflow, but it does not install or host the website.
 
-Agents can use the published site without installing anything. Send them to the
-[agent guide](https://signals.forwardfuture.ai/loop-library/agents/) or the
-[agent instructions](https://signals.forwardfuture.ai/loop-library/llms.txt).
-The live catalog is available as
-[JSON](https://signals.forwardfuture.ai/loop-library/catalog.json) and
-[plain text](https://signals.forwardfuture.ai/loop-library/catalog.txt).
+Agents that do not have the skill can use the published
+[agent guide](https://signals.forwardfuture.ai/loop-library/agents/),
+[agent instructions](https://signals.forwardfuture.ai/loop-library/llms.txt),
+[JSON catalog](https://signals.forwardfuture.ai/loop-library/catalog.json), or
+[plain-text catalog](https://signals.forwardfuture.ai/loop-library/catalog.txt)
+directly.
+
+Each published loop tells an agent what to do, how to check its work, what to
+try next, and when to stop.
 
 ## What is a loop?
 
