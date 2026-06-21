@@ -450,3 +450,12 @@ URL above.
 - Verify: Every required recovery scenario succeeds repeatedly from a real recovery point. Fresh clean-room restores satisfy integrity, dependency, representative read/write, RPO, and RTO checks under unchanged criteria, with failures preserved as regression drills and restored data destroyed securely.
 - Keywords: backup recovery testing, disaster recovery drill, RPO and RTO validation, clean room restore, recovery proof
 - Related: [The quality streak loop](https://signals.forwardfuture.ai/loop-library/loops/quality-streak-loop/), [The post-release baseline loop](https://signals.forwardfuture.ai/loop-library/loops/post-release-baseline-loop/), [The production error sweep](https://signals.forwardfuture.ai/loop-library/loops/production-error-sweep/)
+
+## 050 — [The refund follow-up loop](https://signals.forwardfuture.ai/loop-library/loops/refund-follow-up-loop/)
+
+- Category: Operations
+- Use when: Use this when someone owes you a refund and getting it may take more than one support conversation or follow-up.
+- Prompt: Get my refund for [company and charge info]. Start the claim now through an approved support channel, then keep following up on replies, promises, and deadlines until the refund arrives. Keep a short case note so each follow-up has context. Stop only when the refund is received or you are genuinely blocked and need me.
+- Verify: The refund is received, or a genuine blocker requires the user. An open claim, promise, or pending refund is progress, not success; keep following up until the money arrives or no approved next step remains.
+- Keywords: refund follow up, consumer advocacy, customer support escalation, refund status tracking, case log
+- Related: [The promise-to-proof loop](https://signals.forwardfuture.ai/loop-library/loops/promise-to-proof-loop/), [The Living Story loop](https://signals.forwardfuture.ai/loop-library/loops/living-story-loop/), [The recent-feedback sweep](https://signals.forwardfuture.ai/loop-library/loops/recent-feedback-sweep/)

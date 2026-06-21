@@ -549,4 +549,15 @@
     </author>
     <summary>A disaster-recovery validation workflow that restores randomly selected real recovery points, verifies integrity and RPO/RTO, and preserves failures as regression drills.</summary>
   </entry>
+  <entry>
+    <title>The refund follow-up loop</title>
+    <id>https://signals.forwardfuture.ai/loop-library/loops/refund-follow-up-loop/</id>
+    <link href="https://signals.forwardfuture.ai/loop-library/loops/refund-follow-up-loop/" />
+    <published>2026-06-21T00:00:00-07:00</published>
+    <updated>2026-06-21T00:00:00-07:00</updated>
+    <author>
+      <name>Jason (@jxnlco)</name>
+    </author>
+    <summary>A persistent follow-up workflow that starts a refund claim, watches replies and deadlines, and keeps the case moving until the money arrives.</summary>
+  </entry>
 </feed>

@@ -7,7 +7,7 @@ export const site = {
   description:
     "Practical AI agent workflows for engineering, research, editorial work, evaluation, and operations.",
   updated: "2026-06-21",
-  socialImageVersion: "20260621",
+  socialImageVersion: "20260621-2",
   socialImageExtension: "png",
   socialImageMimeType: "image/png",
 };
@@ -21,9 +21,9 @@ export const categories = [
 ];
 
 export const featuredLoopSlugs = [
+  "refund-follow-up-loop",
   "five-minute-repository-maintainer-loop",
   "full-product-evaluation-loop",
-  "fresh-clone-loop",
 ];
 
 const categorySlugByLabel = new Map([
@@ -35,6 +35,7 @@ const categorySlugByLabel = new Map([
   ["AI data operations workflow", "operations"],
   ["AI deployment operations workflow", "operations"],
   ["AI recovery operations workflow", "operations"],
+  ["AI consumer advocacy workflow", "operations"],
   ["AI search visibility workflow", "content"],
   ["AI editorial workflow", "content"],
   ["AI visual design workflow", "design"],
@@ -2060,6 +2061,51 @@ export const loops = [
       "quality-streak-loop",
       "post-release-baseline-loop",
       "production-error-sweep",
+    ],
+  },
+  {
+    number: "050",
+    slug: "refund-follow-up-loop",
+    title: "The refund follow-up loop",
+    summary:
+      "Keeps pursuing a refund until the money arrives or the agent genuinely needs the user.",
+    seoTitle: "Refund Follow-Up Loop for AI Agents | Loop Library",
+    description:
+      "A persistent follow-up workflow that starts a refund claim, watches replies and deadlines, and keeps the case moving until the money arrives.",
+    categoryLabel: "AI consumer advocacy workflow",
+    author: "Jason (@jxnlco)",
+    sourceUrl: "https://x.com/jxnlco",
+    published: "2026-06-21",
+    modified: "2026-06-21",
+    prompt:
+      "Get my refund for [company and charge info]. Start the claim now through an approved support channel, then keep following up on replies, promises, and deadlines until the refund arrives. Keep a short case note so each follow-up has context. Stop only when the refund is received or you are genuinely blocked and need me.",
+    verifyTitle:
+      "The refund is received, or a genuine blocker requires the user.",
+    verifyDetail:
+      "An open claim, promise, or pending refund is progress, not success; keep following up until the money arrives or no approved next step remains.",
+    useWhen:
+      "Use this when someone owes you a refund and getting it may take more than one support conversation or follow-up.",
+    steps: [
+      "Gather the charge, reason for the refund, useful evidence, current status, and any earlier conversation or promise.",
+      "Start or continue the claim through a support channel the user has approved, then note what happened and what should happen next.",
+      "Follow up whenever a reply, promise, or deadline creates a useful next step; keep the case moving instead of treating a pending status as done.",
+      "Stop when the refund arrives, or explain the genuine blocker when the next useful step needs the user.",
+    ],
+    why:
+      "Refunds often stall because a promise or pending status gets treated as completion. This loop keeps ownership through delays and handoffs until the money actually arrives.",
+    note:
+      "Use truthful information and the permissions already granted. If the next step needs a new permission or decision, bring that blocker to the user instead of stopping silently.",
+    keywords: [
+      "refund follow up",
+      "consumer advocacy",
+      "customer support escalation",
+      "refund status tracking",
+      "case log",
+    ],
+    related: [
+      "promise-to-proof-loop",
+      "living-story-loop",
+      "recent-feedback-sweep",
     ],
   },
 ];

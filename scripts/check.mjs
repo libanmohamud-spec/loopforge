@@ -211,6 +211,7 @@ const requestedConceptSlugs = [
   "living-story-loop",
   "groundtruth-audit-loop",
   "recovery-proof-loop",
+  "refund-follow-up-loop",
 ];
 const submissionPromptAnchors = new Map([
   ["ticket-to-pr-ready-loop", ["bug report", "customer complaint"]],
@@ -267,6 +268,10 @@ const submissionPromptAnchors = new Map([
     "recovery-proof-loop",
     ["disposable, isolated clean-room", "actual RPO and RTO", "never overwrite production"],
   ],
+  [
+    "refund-follow-up-loop",
+    ["Start the claim now", "keep following up", "genuinely blocked"],
+  ],
 ]);
 const beginnerClarityAnchors = new Map([
   ["promise-to-proof-loop", ["marketing", "current product behavior", "customer trust"]],
@@ -302,6 +307,10 @@ const beginnerClarityAnchors = new Map([
     "recovery-proof-loop",
     ["real recovery point", "representative business reads and writes", "restored production data"],
   ],
+  [
+    "refund-follow-up-loop",
+    ["pending refund is progress, not success", "money actually arrives", "permissions already granted"],
+  ],
 ]);
 
 assert.equal(collection.mainEntity.numberOfItems, loops.length);
@@ -319,7 +328,7 @@ assert.deepEqual(agentLoopTerm.sameAs, [
   "https://code.claude.com/docs/en/agent-sdk/agent-loop",
   "https://arxiv.org/abs/2210.03629",
 ]);
-assert.equal(loops.length, 49);
+assert.equal(loops.length, 50);
 assert.equal(slugs.size, loops.length);
 assert.equal(featuredLoopSlugs.length, 3);
 assert.equal(new Set(featuredLoopSlugs).size, featuredLoopSlugs.length);
@@ -805,6 +814,7 @@ assert(html.includes("Alex Burkhart (@neuralwhisperer)"));
 assert(html.includes("Buddy Hadry (@buddyhadry)"));
 assert(html.includes("Mohamed (@aivibecode)"));
 assert(html.includes("Eric Lott"));
+assert(html.includes("Jason (@jxnlco)"));
 for (const removedSlug of [
   "focused-ai-signal-brief",
   "hands-on-tool-evaluation-loop",
