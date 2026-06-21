@@ -693,6 +693,10 @@ for (const [index, loop] of loops.entries()) {
   );
   assert(page.includes('<a href="../../learn/">Learn</a>'));
   assert(page.includes('<a href="../../agents/">For agents</a>'));
+  assert.equal(
+    (page.match(/aria-label="Loop Library skill on GitHub"/g) || []).length,
+    2,
+  );
   assert.equal((page.match(/class="mobile-site-nav"/g) || []).length, 1);
   assert(!page.includes('href="../../#tips"'));
   assert(page.includes('data-copy-root'));
@@ -896,6 +900,10 @@ assert(!html.includes(`<span>Copy link</span>`));
 assert(html.includes('<a href="#library" aria-current="page">Loops</a>'));
 assert(html.includes('<a href="./learn/">Learn</a>'));
 assert(html.includes('<a href="./agents/">For agents</a>'));
+assert.equal(
+  (html.match(/aria-label="Loop Library skill on GitHub"/g) || []).length,
+  2,
+);
 assert.equal((html.match(/class="mobile-site-nav"/g) || []).length, 1);
 assert(!html.includes('class="loop-guide"'));
 assert(!html.includes("A useful loop specifies:"));
@@ -933,7 +941,7 @@ assert(
 );
 assert(html.includes("<span>Copy command</span>"));
 assert(
-  !html.includes(
+  html.includes(
     "https://github.com/Forward-Future/loop-library/tree/main/skills/loop-library",
   ),
 );
@@ -972,6 +980,10 @@ assert(learnHtml.includes('id="devin"'));
 assert(learnHtml.includes('href="../agents/">For agents</a>'));
 assert(learnHtml.includes('<a href="../#library">Loops</a>'));
 assert(learnHtml.includes('<a href="./" aria-current="page">Learn</a>'));
+assert.equal(
+  (learnHtml.match(/aria-label="Loop Library skill on GitHub"/g) || []).length,
+  2,
+);
 assert.equal((learnHtml.match(/class="mobile-site-nav"/g) || []).length, 1);
 assert(learnHtml.includes(`href="${siteMeta.baseUrl}llms.txt"`));
 assert(learnHtml.includes(`href="${siteMeta.baseUrl}agents/"`));
@@ -984,6 +996,10 @@ assert(agentHtml.includes("Use Loop Library directly."));
 assert(agentHtml.includes('<a href="../#library">Loops</a>'));
 assert(agentHtml.includes('<a href="../learn/">Learn</a>'));
 assert(agentHtml.includes('<a href="./" aria-current="page">For agents</a>'));
+assert.equal(
+  (agentHtml.match(/aria-label="Loop Library skill on GitHub"/g) || []).length,
+  2,
+);
 assert.equal((agentHtml.match(/class="mobile-site-nav"/g) || []).length, 1);
 assert(agentHtml.includes("No skill installation is required."));
 assert(agentHtml.includes('href="../catalog.json"'));

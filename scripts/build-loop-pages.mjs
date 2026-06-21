@@ -366,6 +366,14 @@ ${structuredData(loop)}
         <a href="../../#library" aria-current="page">Loops</a>
         <a href="../../learn/">Learn</a>
         <a href="../../agents/">For agents</a>
+        <a
+          href="https://github.com/Forward-Future/loop-library/tree/main/skills/loop-library"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="Loop Library skill on GitHub"
+        >
+          Skill
+        </a>
         <button
           class="theme-toggle"
           id="theme-toggle"
@@ -390,6 +398,14 @@ ${structuredData(loop)}
         <a href="../../#library" aria-current="page">Loops</a>
         <a href="../../learn/">Learn</a>
         <a href="../../agents/">For agents</a>
+        <a
+          href="https://github.com/Forward-Future/loop-library/tree/main/skills/loop-library"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="Loop Library skill on GitHub"
+        >
+          Skill
+        </a>
       </nav>
     </header>
 
