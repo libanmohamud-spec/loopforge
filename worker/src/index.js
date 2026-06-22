@@ -345,6 +345,7 @@ function getCorsHeaders(origin, env) {
 
   return {
     "Access-Control-Allow-Origin": origin,
+    "Access-Control-Expose-Headers": "Retry-After",
     "Cache-Control": "no-store",
     Vary: "Origin",
   };

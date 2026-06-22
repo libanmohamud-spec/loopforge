@@ -677,6 +677,20 @@ async function initializeFormProtection() {
   }
 }
 
+function formatRetryHint(seconds) {
+  if (!Number.isFinite(seconds) || seconds <= 0) {
+    return "";
+  }
+
+  if (seconds < 90) {
+    const rounded = Math.max(1, Math.ceil(seconds));
+    return ` Try again in about ${rounded} second${rounded === 1 ? "" : "s"}.`;
+  }
+
+  const minutes = Math.max(1, Math.ceil(seconds / 60));
+  return ` Try again in about ${minutes} minute${minutes === 1 ? "" : "s"}.`;
+}
+
 async function postProtectedForm(path, body, fallbackMessage) {
   const response = await fetch(`${FORM_API_ORIGIN}${path}`, {
     method: "POST",
@@ -695,9 +709,13 @@ async function postProtectedForm(path, body, fallbackMessage) {
   }
 
   if (!response.ok) {
-    throw new Error(
-      responseBody.error || fallbackMessage,
-    );
+    let message = responseBody.error || fallbackMessage;
+
+    if (response.status === 429) {
+      message += formatRetryHint(Number(response.headers.get("Retry-After")));
+    }
+
+    throw new Error(message);
   }
 }
 

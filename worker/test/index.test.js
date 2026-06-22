@@ -370,6 +370,10 @@ test("rate limits invalid-token floods before calling Siteverify", async () => {
 
   assert.equal(response.status, 429);
   assert.equal(response.headers.get("Retry-After"), "60");
+  assert.equal(
+    response.headers.get("Access-Control-Expose-Headers"),
+    "Retry-After",
+  );
   assert.equal(body.code, "rate_limited");
   assert.deepEqual(rateLimitCalls, ["suggestions:203.0.113.10"]);
   assert.equal(calls.turnstile.length, 0);
