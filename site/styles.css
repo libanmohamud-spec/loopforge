@@ -829,10 +829,14 @@ code {
   width: 124px;
 }
 
+.loop-row {
+  background: var(--surface);
+}
+
 .loop-table td {
   padding: 22px 20px;
   border: 0;
-  background: var(--surface);
+  background: transparent;
   vertical-align: top;
 }
 
