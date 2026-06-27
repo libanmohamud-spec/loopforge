@@ -1,0 +1,42 @@
+{
+  "system": "Agentic Deploy Assistant (broken)",
+  "version": "1.0",
+  "description": "Same system, but the threat model is half-finished and dressed up to look done. The verifier should refuse to close the loop.",
+  "assets": [
+    { "id": "A1", "name": "Production cloud credentials", "classification": "restricted" },
+    { "id": "A2", "name": "Customer data store", "classification": "confidential" },
+    { "id": "A3", "name": "Source repository", "classification": "internal" }
+  ],
+  "trust_boundaries": [
+    { "id": "TB1", "name": "User to agent", "between": ["human-operator", "agent-runtime"] },
+    { "id": "TB2", "name": "Agent to infrastructure", "between": ["agent-runtime", "cloud-control-plane"] }
+  ],
+  "entry_points": [
+    { "id": "E1", "name": "Chat prompt interface", "boundary": "TB1", "auth": "none" },
+    { "id": "E2", "name": "MCP tool call to deploy API", "boundary": "TB2", "auth": "service" },
+    { "id": "E3", "name": "Admin override console", "boundary": "TB2", "auth": "admin" }
+  ],
+  "threats": [
+    {
+      "id": "T1",
+      "title": "Prompt injection drives an unintended deploy",
+      "stride": ["T"],
+      "entry_point": "E1",
+      "assets": ["A1", "A2"],
+      "severity": "critical",
+      "mitigations": []
+    },
+    {
+      "id": "T2",
+      "title": "Privilege escalation on cloud control plane",
+      "stride": ["E"],
+      "entry_point": "E9",
+      "assets": ["A1"],
+      "severity": "high",
+      "mitigations": ["M1"]
+    }
+  ],
+  "mitigations": [
+    { "id": "M1", "description": "Admission gate authorises each tool call", "status": "proposed" }
+  ]
+}

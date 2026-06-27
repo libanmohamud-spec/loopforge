@@ -1,0 +1,112 @@
+{
+  "system": "Sector8 Python SDK (sector8-sdk)",
+  "version": "1.0",
+  "description": "Client library published to PyPI that evaluates proposed agent tool actions against the Sector8 Gate (POST /api/v1/evaluate), optionally sends telemetry, and ships sector8-verify onboarding and sector8-guard MCP installer CLIs. Scope is the SDK package in sector8-sdk-python, not the Gate service itself. Assumptions: customers run the SDK inside their own application process; production uses https://sdkapi.sector8.ai with HTTPS host allowlisting unless unsafe_endpoint is explicitly set; runtime keys are one-time-reveal secrets held in environment or app config.",
+  "assets": [
+    { "id": "A1", "name": "Customer runtime API key (SECTOR8_API_KEY)", "classification": "restricted" },
+    { "id": "A2", "name": "Tenant client identity (SECTOR8_CLIENT_ID)", "classification": "confidential" },
+    { "id": "A3", "name": "Proposed tool arguments and LLM prompt/completion telemetry", "classification": "confidential" },
+    { "id": "A4", "name": "Decision artifact integrity (ALLOW/DENY outcome and trace fields)", "classification": "internal" },
+    { "id": "A5", "name": "Host application actions gated before execution", "classification": "confidential" },
+    { "id": "A6", "name": "Local MCP configuration (.claude/settings.json)", "classification": "internal" }
+  ],
+  "trust_boundaries": [
+    { "id": "TB1", "name": "Host application to SDK library", "between": ["customer-app", "sector8-sdk"] },
+    { "id": "TB2", "name": "SDK HTTP client to Sector8 Gate API", "between": ["sector8-sdk", "sector8-gate"] },
+    { "id": "TB3", "name": "Operator environment to sector8-verify CLI", "between": ["operator", "onboarding-cli"] },
+    { "id": "TB4", "name": "Developer workstation to project MCP config", "between": ["developer", "local-project"] },
+    { "id": "TB5", "name": "PyPI registry to customer install environment", "between": ["pypi", "customer-runtime"] }
+  ],
+  "entry_points": [
+    { "id": "E1", "name": "Application calls client.evaluate() and branches on decision.allowed", "boundary": "TB1", "auth": "user" },
+    { "id": "E2", "name": "SDK POST /api/v1/evaluate with X-API-Key and X-Client-Id headers", "boundary": "TB2", "auth": "service" },
+    { "id": "E3", "name": "SDK POST telemetry, threat-alerts, or incident-logs endpoints", "boundary": "TB2", "auth": "service" },
+    { "id": "E4", "name": "sector8-verify reads SECTOR8_* environment and calls evaluate fixtures", "boundary": "TB3", "auth": "service" },
+    { "id": "E5", "name": "sector8-guard install writes sector8-guard MCP entry to .claude/settings.json", "boundary": "TB4", "auth": "user" },
+    { "id": "E6", "name": "pip install sector8-sdk from PyPI into customer environment", "boundary": "TB5", "auth": "none" }
+  ],
+  "threats": [
+    {
+      "id": "T1",
+      "title": "Host application executes privileged tool after DENY or SDK error instead of failing closed",
+      "stride": ["E"],
+      "entry_point": "E1",
+      "assets": ["A4", "A5"],
+      "severity": "critical",
+      "mitigations": ["M1"]
+    },
+    {
+      "id": "T2",
+      "title": "Host application bypasses evaluate() on sensitive code paths while still importing the SDK",
+      "stride": ["E"],
+      "entry_point": "E1",
+      "assets": ["A5"],
+      "severity": "high",
+      "mitigations": ["M1"]
+    },
+    {
+      "id": "T3",
+      "title": "Misconfigured unsafe_endpoint sends runtime API key to attacker-controlled origin",
+      "stride": ["S", "I"],
+      "entry_point": "E2",
+      "assets": ["A1", "A2", "A3"],
+      "severity": "critical",
+      "mitigations": ["M2", "M3"]
+    },
+    {
+      "id": "T4",
+      "title": "Network adversary tampers with evaluate response so host app treats malformed payload as ALLOW",
+      "stride": ["T", "E"],
+      "entry_point": "E2",
+      "assets": ["A4", "A5"],
+      "severity": "high",
+      "mitigations": ["M3", "M4"]
+    },
+    {
+      "id": "T5",
+      "title": "Telemetry upload exfiltrates customer prompt and completion content containing secrets",
+      "stride": ["I"],
+      "entry_point": "E3",
+      "assets": ["A3"],
+      "severity": "high",
+      "mitigations": ["M5"]
+    },
+    {
+      "id": "T6",
+      "title": "Onboarding verifier run in shared CI exposes runtime key via environment dump or verbose logs",
+      "stride": ["I"],
+      "entry_point": "E4",
+      "assets": ["A1"],
+      "severity": "medium",
+      "mitigations": ["M6"]
+    },
+    {
+      "id": "T7",
+      "title": "sector8-guard install repoints MCP stdio server to attacker script that reads SECTOR8_API_KEY from env",
+      "stride": ["T", "E"],
+      "entry_point": "E5",
+      "assets": ["A1", "A6"],
+      "severity": "high",
+      "mitigations": ["M7"]
+    },
+    {
+      "id": "T8",
+      "title": "Typosquat PyPI package substitutes malicious client that exfiltrates keys on sector8.setup()",
+      "stride": ["T", "I", "E"],
+      "entry_point": "E6",
+      "assets": ["A1", "A5"],
+      "severity": "critical",
+      "mitigations": ["M8"]
+    }
+  ],
+  "mitigations": [
+    { "id": "M1", "description": "README and SDK contract require executing actions only when decision.allowed is True; authentication and validation failures raise errors and must not be treated as ALLOW", "status": "implemented" },
+    { "id": "M2", "description": "validate_base_url restricts remote traffic to sdkapi.sector8.ai by default; arbitrary hosts require explicit unsafe_endpoint", "status": "implemented" },
+    { "id": "M3", "description": "Plain HTTP rejected unless unsafe_endpoint is set; production docs omit staging override variables", "status": "implemented" },
+    { "id": "M4", "description": "DecisionArtifact.from_payload validates required fields and rejects inconsistent ALLOW/DENY payloads", "status": "implemented" },
+    { "id": "M5", "description": "Customers control telemetry payload content; SDK sends only fields the application passes; docs warn against logging secrets in prompts", "status": "implemented" },
+    { "id": "M6", "description": "sector8-verify prints decision trace IDs only and does not echo API keys or request payloads on success", "status": "implemented" },
+    { "id": "M7", "description": "sector8-guard install prompts before overwriting existing MCP entry and writes repo-relative command paths", "status": "implemented" },
+    { "id": "M8", "description": "Official PyPI package name is sector8-sdk; README instructs customers to pin approved versions and avoid look-alike package names", "status": "implemented" }
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "name": "loopforge",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Security agent loops where the verify gate is executable, not prose.",
+  "scripts": {
+    "check": "python3 ci/check.py",
+    "dev": "npx --yes serve . -l 4173",
+    "preview": "npm run dev"
+  },
+  "license": "MIT"
+}

@@ -1,0 +1,96 @@
+{
+  "system": "Loopforge public catalog and loop distribution",
+  "version": "1.0",
+  "description": "Static GitHub Pages site serving catalog.json, loop prompts, and verifiers. Contributors change loops/ and catalog.json via git; users clone or fetch the catalog and run verify.py locally against artifacts an agent produces in their own workspace. Assumptions: no server-side execution on Pages; CI runs only on GitHub Actions; users treat prompt.md as untrusted reference per Learn page; no secrets in the repository.",
+  "assets": [
+    { "id": "A1", "name": "Catalog index integrity (catalog.json)", "classification": "public" },
+    { "id": "A2", "name": "Loop verifier script integrity (verify.py)", "classification": "internal" },
+    { "id": "A3", "name": "Loop prompt content integrity (prompt.md)", "classification": "public" },
+    { "id": "A4", "name": "User workspace and source code under review", "classification": "confidential" },
+    { "id": "A5", "name": "CI enforcement pipeline", "classification": "internal" }
+  ],
+  "trust_boundaries": [
+    { "id": "TB1", "name": "Internet to GitHub Pages", "between": ["anonymous-visitor", "static-site"] },
+    { "id": "TB2", "name": "Contributor to git repository", "between": ["contributor", "github-repo"] },
+    { "id": "TB3", "name": "Agent runtime to user workspace", "between": ["coding-agent", "user-workspace"] }
+  ],
+  "entry_points": [
+    { "id": "E1", "name": "Public HTTP fetch of site, catalog.json, and loop files", "boundary": "TB1", "auth": "none" },
+    { "id": "E2", "name": "Pull request or push changing loops/ or catalog.json", "boundary": "TB2", "auth": "user" },
+    { "id": "E3", "name": "Agent reads prompt.md and writes THREAT_MODEL.json locally", "boundary": "TB3", "auth": "user" },
+    { "id": "E4", "name": "GitHub Actions runs ci/check.py on merge candidate", "boundary": "TB2", "auth": "service" }
+  ],
+  "threats": [
+    {
+      "id": "T1",
+      "title": "Attacker serves tampered catalog.json or verifier via compromised Pages deploy pointing users at malicious loop definitions",
+      "stride": ["T", "S"],
+      "entry_point": "E2",
+      "assets": ["A1", "A2", "A3"],
+      "severity": "critical",
+      "mitigations": ["M1", "M2"]
+    },
+    {
+      "id": "T2",
+      "title": "Malicious pull request weakens verify.py so failing artifacts pass the gate",
+      "stride": ["T"],
+      "entry_point": "E2",
+      "assets": ["A2", "A5"],
+      "severity": "critical",
+      "mitigations": ["M1", "M2"]
+    },
+    {
+      "id": "T3",
+      "title": "Prompt injection in prompt.md instructs agent to exfiltrate confidential workspace files while threat modeling",
+      "stride": ["T", "I"],
+      "entry_point": "E3",
+      "assets": ["A3", "A4"],
+      "severity": "high",
+      "mitigations": ["M3", "M4"]
+    },
+    {
+      "id": "T4",
+      "title": "User treats catalog prompt text as authorization to run destructive commands in production",
+      "stride": ["E"],
+      "entry_point": "E3",
+      "assets": ["A4"],
+      "severity": "high",
+      "mitigations": ["M4"]
+    },
+    {
+      "id": "T5",
+      "title": "Catalog index advertises verifier path that does not exist, breaking automated loop discovery",
+      "stride": ["T"],
+      "entry_point": "E2",
+      "assets": ["A1"],
+      "severity": "medium",
+      "mitigations": ["M2"]
+    },
+    {
+      "id": "T6",
+      "title": "Denial of service via oversized loop artifact or verifier run exhausting CI minutes",
+      "stride": ["D"],
+      "entry_point": "E4",
+      "assets": ["A5"],
+      "severity": "medium",
+      "mitigations": ["M5"]
+    },
+    {
+      "id": "T7",
+      "title": "Unauthenticated visitor scrapes catalog.json to map security workflow patterns across targets",
+      "stride": ["I"],
+      "entry_point": "E1",
+      "assets": ["A1", "A3"],
+      "severity": "low",
+      "mitigations": ["M6"]
+    }
+  ],
+  "mitigations": [
+    { "id": "M1", "description": "Require maintainer review on loops/, ci/, and catalog.json changes before merge to main", "status": "proposed" },
+    { "id": "M2", "description": "ci/check.py runs check_loops.py and check_catalog.py on every pull request via GitHub Actions", "status": "implemented" },
+    { "id": "M3", "description": "Loop prompts state catalog content is untrusted reference data, not authorization to act", "status": "implemented" },
+    { "id": "M4", "description": "Learn page requires approval for consequential actions; verifier proves structure only", "status": "implemented" },
+    { "id": "M5", "description": "CI uses fixed example artifacts only; no arbitrary user uploads in the workflow", "status": "implemented" },
+    { "id": "M6", "description": "Accepted risk: catalog is public by design for machine discovery", "status": "accepted-risk" }
+  ]
+}

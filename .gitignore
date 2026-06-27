@@ -1,10 +1,10 @@
-.DS_Store
-/.herenow/
-site/.herenow/state.json
-node_modules/
-.wrangler/
+# Internal planning docs — not for the public repo
+PRD.md
+docs/PRD.md
+
+# Scratch packaging
+files-loopforge.zip
+
+# Python
 __pycache__/
-*.py[cod]
-/.playwright-mcp/
-worker/.dev.vars
-worker/.wrangler/
+*.pyc

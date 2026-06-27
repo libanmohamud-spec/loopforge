@@ -1,0 +1,73 @@
+{
+  "system": "Agentic Deploy Assistant",
+  "version": "1.0",
+  "description": "An LLM agent that proposes and executes deployments from a chat interface, calling MCP tools against CI/CD and cloud APIs.",
+  "assets": [
+    { "id": "A1", "name": "Production cloud credentials", "classification": "restricted" },
+    { "id": "A2", "name": "Customer data store", "classification": "confidential" },
+    { "id": "A3", "name": "Source repository", "classification": "internal" },
+    { "id": "A4", "name": "Deployment audit log", "classification": "internal" }
+  ],
+  "trust_boundaries": [
+    { "id": "TB1", "name": "User to agent", "between": ["human-operator", "agent-runtime"] },
+    { "id": "TB2", "name": "Agent to infrastructure", "between": ["agent-runtime", "cloud-control-plane"] }
+  ],
+  "entry_points": [
+    { "id": "E1", "name": "Chat prompt interface", "boundary": "TB1", "auth": "user" },
+    { "id": "E2", "name": "MCP tool call to deploy API", "boundary": "TB2", "auth": "service" },
+    { "id": "E3", "name": "Git webhook callback", "boundary": "TB2", "auth": "service" }
+  ],
+  "threats": [
+    {
+      "id": "T1",
+      "title": "Indirect prompt injection via repo content drives an unintended deploy",
+      "stride": ["T", "E"],
+      "entry_point": "E1",
+      "assets": ["A1", "A3"],
+      "severity": "critical",
+      "mitigations": ["M1", "M2"]
+    },
+    {
+      "id": "T2",
+      "title": "Agent escalates from read to write on cloud control plane",
+      "stride": ["E"],
+      "entry_point": "E2",
+      "assets": ["A1"],
+      "severity": "critical",
+      "mitigations": ["M2"]
+    },
+    {
+      "id": "T3",
+      "title": "Forged webhook payload triggers deploy of attacker-controlled commit",
+      "stride": ["S", "T"],
+      "entry_point": "E3",
+      "assets": ["A3"],
+      "severity": "high",
+      "mitigations": ["M3"]
+    },
+    {
+      "id": "T4",
+      "title": "Audit log entry suppressed so an action cannot be attributed",
+      "stride": ["R"],
+      "entry_point": "E2",
+      "assets": ["A4"],
+      "severity": "high",
+      "mitigations": ["M4"]
+    },
+    {
+      "id": "T5",
+      "title": "Deploy tool reads customer data outside its task scope",
+      "stride": ["I"],
+      "entry_point": "E2",
+      "assets": ["A2"],
+      "severity": "high",
+      "mitigations": ["M2"]
+    }
+  ],
+  "mitigations": [
+    { "id": "M1", "description": "Re-read source-of-truth deploy policy before any privileged action; never act from compressed context", "status": "proposed" },
+    { "id": "M2", "description": "Independent admission gate authorises each tool call against per-action policy; default deny", "status": "proposed" },
+    { "id": "M3", "description": "Verify webhook HMAC signature and pin to known commit refs before acting", "status": "implemented" },
+    { "id": "M4", "description": "Append-only audit log with evidence hash emitted at decision time, outside agent control", "status": "proposed" }
+  ]
+}

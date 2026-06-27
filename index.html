@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="Security agent loops where the verify gate is executable, not prose."
+    />
+    <title>Loopforge</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,600;9..40,700&family=JetBrains+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <header class="header">
+      <div class="wrap header-row">
+        <a class="brand" href="./">
+          <span class="brand-dot" aria-hidden="true"></span>
+          Loopforge
+        </a>
+        <nav class="nav">
+          <a href="#loops">Loops</a>
+          <a href="./learn/">Learn</a>
+          <a href="./catalog.json">catalog.json</a>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <section class="hero wrap">
+        <p class="eyebrow">v0.1 · executable verify gates</p>
+        <h1>The agent proposes. The verifier authorises.</h1>
+        <p class="lede">
+          A library of security agent loops where “done” means
+          <code>verify.py</code> exits 0 — not “looks complete.”
+        </p>
+        <pre class="diagram" aria-label="Loop flow"><code>produce / revise  ──►  artifact  ──►  verify.py
+                                         │  │
+                             exit 1 ─────┘  │ exit 0
+                             (keep going)   ▼
+                                         loop closes</code></pre>
+      </section>
+
+      <section id="loops" class="wrap loops">
+        <h2>Loops</h2>
+        <div id="loop-list" class="loop-list"></div>
+      </section>
+
+      <section class="wrap try">
+        <h2>Try the threat-model verifier</h2>
+        <pre><code>cd loops/threat-model
+python3 verify.py examples/THREAT_MODEL.json       # PASS
+python3 verify.py examples/THREAT_MODEL.fail.json  # BLOCKED</code></pre>
+      </section>
+    </main>
+
+    <footer class="footer wrap">
+      <p>MIT · No verifier, no loop.</p>
+    </footer>
+
+    <script src="./app.js" type="module"></script>
+  </body>
+</html>

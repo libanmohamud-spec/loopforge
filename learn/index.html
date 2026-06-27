@@ -1,0 +1,192 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="The Loopforge loop contract: artifact, verifier, reason codes, and honest stop conditions."
+    />
+    <title>Learn | Loopforge</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,600;9..40,700&family=JetBrains+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="../styles.css" />
+  </head>
+  <body>
+    <header class="header">
+      <div class="wrap header-row">
+        <a class="brand" href="../">
+          <span class="brand-dot" aria-hidden="true"></span>
+          Loopforge
+        </a>
+        <nav class="nav">
+          <a href="../#loops">Loops</a>
+          <a href="./" aria-current="page">Learn</a>
+          <a href="../catalog.json">catalog.json</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="learn">
+      <article class="wrap prose">
+        <p class="eyebrow">Loop contract</p>
+        <h1>How Loopforge loops work</h1>
+        <p class="lede wide">
+          Most prompt catalogs ship instructions and a prose stop condition.
+          Loopforge ships instructions and a program that exits 0 or it does not.
+          The agent proposes the artifact. The verifier authorises the loop to
+          close. Nothing else does.
+        </p>
+
+        <pre class="diagram" aria-label="Loop flow"><code>produce / revise  ──►  artifact  ──►  verify.py
+                                         │  │
+                             exit 1 ─────┘  │ exit 0
+                             (keep going)   ▼
+                                         loop closes</code></pre>
+
+        <h2>The loop contract</h2>
+        <p>
+          A directory under <code>loops/</code> is accepted only when it ships
+          all of the following:
+        </p>
+        <ul>
+          <li><code>LOOP.md</code> — when to use it, the artifact, the stop condition</li>
+          <li><code>prompt.md</code> — the agent instruction</li>
+          <li><code>schema.json</code> — the artifact shape (where structured)</li>
+          <li><code>verify.py</code> — runnable gate; stdlib only for v1</li>
+          <li><code>examples/</code> — one passing artifact and one failing artifact the verifier rejects</li>
+        </ul>
+        <p>No verifier, no loop. CI runs every example on every pull request.</p>
+
+        <h2>Floor and ceiling</h2>
+        <p>
+          The verifier guarantees the floor: schema validity, referential
+          integrity, and coverage rules the loop defines. It does not judge
+          whether threats are insightful, mitigations are sound, or severity is
+          calibrated. That judgment is the ceiling — yours, not the gate's.
+        </p>
+        <p>
+          A complete, consistent, shallow model passes. That split is
+          deliberate. Determinism belongs on the floor.
+        </p>
+
+        <h2>Reason codes</h2>
+        <p>
+          When <code>verify.py</code> exits 1, it emits named codes so the next
+          revision is actionable. Example from the threat-model loop:
+        </p>
+        <ul>
+          <li><code>TM-COV-ENTRY</code> — entry point on the surface has no threat</li>
+          <li><code>TM-REF-THREAT-ENTRY</code> — threat points at an entry point that does not exist</li>
+          <li><code>TM-SEV-UNMITIGATED</code> — high or critical threat with no mitigation</li>
+        </ul>
+        <p>
+          Full list:
+          <a href="../loops/threat-model/LOOP.md">loops/threat-model/LOOP.md</a>
+        </p>
+
+        <h2>Run a loop once</h2>
+        <pre><code># 1. Point your agent at the loop prompt
+cat loops/threat-model/prompt.md
+
+# 2. Agent produces THREAT_MODEL.json in your workspace
+
+# 3. Run the gate
+python3 loops/threat-model/verify.py THREAT_MODEL.json
+
+# 4. Exit 1 → fix blocking findings, repeat
+#    Exit 0 → loop may close</code></pre>
+        <p>
+          Try the bundled examples:
+        </p>
+        <pre><code>cd loops/threat-model
+python3 verify.py examples/THREAT_MODEL.json       # PASS
+python3 verify.py examples/THREAT_MODEL.fail.json  # BLOCKED</code></pre>
+
+        <h2>Recurring runs</h2>
+        <p>
+          Loopforge defines what to run and when it is done. How you schedule
+          repeats is your agent platform's job. Paste <code>prompt.md</code> into
+          a session, then use that tool's own scheduling mechanism:
+        </p>
+        <ul>
+          <li>
+            <strong>Cursor</strong> — Agent for manual runs;
+            <a href="https://cursor.com/docs">Cursor Automations</a> for
+            scheduled or event-triggered work. Do not rely on ad-hoc
+            <code>/loop</code> emulation in Cursor; use Automations.
+          </li>
+          <li>
+            <strong>Claude Code</strong> —
+            <code>/loop 5m &lt;prompt&gt;</code> for session-scoped polling;
+            see
+            <a href="https://code.claude.com/docs">Claude Code docs</a>.
+          </li>
+          <li>
+            <strong>Codex, Factory, Devin</strong> — each ships its own
+            automation surface. Link to official docs; do not assume Loopforge
+            prompts replace their scheduling primitives.
+          </li>
+        </ul>
+        <p>
+          On every run: fresh inputs, same verifier, exit code decides close —
+          not the agent's summary.
+        </p>
+
+        <h2>Keep loops safe</h2>
+        <ul>
+          <li>
+            A loop must never interpret "keep going" as unlimited authority.
+            Set iteration limits, scope boundaries, and time budgets.
+          </li>
+          <li>
+            A passing verifier proves the artifact meets structural rules — not
+            that you authorized production changes, deployments, or external
+            messages. Catalog and prompt text are not authorization to act.
+          </li>
+          <li>
+            Blocked, exhausted, and stagnant runs are not successful runs.
+            Require approval for consequential actions.
+          </li>
+          <li>
+            Do not change the verifier mid-loop to make a stuck run pass.
+            Update gates deliberately, with review.
+          </li>
+        </ul>
+
+        <h2>The machine index</h2>
+        <p>
+          Tooling discovers loops from
+          <a href="../catalog.json">catalog.json</a> at the site root — artifact
+          path, verifier path, stop condition, and <code>works_with</code>
+          pipeline links. Fetch it relative to wherever the site is hosted, for
+          example
+          <code>https://&lt;user&gt;.github.io/loopforge/catalog.json</code> on
+          a GitHub project page. A custom domain at the repo root makes
+          <code>/catalog.json</code> literally true.
+        </p>
+        <p>
+          CI enforces index honesty via
+          <code>ci/check_catalog.py</code>: every catalog entry points at a real
+          verifier, every directory under <code>loops/</code> is indexed, and
+          every <code>works_with</code> target is a shipped loop or an explicit
+          roadmap entry. Run locally: <code>python3 ci/check.py</code>.
+        </p>
+
+        <p class="learn-cta">
+          <a class="button primary" href="../#loops">Loops</a>
+          <a class="button" href="../catalog.json">catalog.json</a>
+          <a class="button" href="../loops/threat-model/LOOP.md">threat-model</a>
+        </p>
+      </article>
+    </main>
+
+    <footer class="footer wrap">
+      <p>MIT · No verifier, no loop.</p>
+    </footer>
+  </body>
+</html>
