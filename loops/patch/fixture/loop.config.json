@@ -1,4 +1,0 @@
-{
-  "poc": ["python3", "poc.py"],
-  "tests": ["python3", "-m", "unittest", "test_app.py"]
-}

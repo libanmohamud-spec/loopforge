@@ -23,10 +23,10 @@ produce / revise  ──►  artifact  ──►  verify.py
 | Loop | Use when | Artifact | Stop condition |
 |---|---|---|---|
 | [threat-model](loops/threat-model/) | Before scanning a new codebase | `THREAT_MODEL.json` | static `verify.py` exits 0 |
-| [patch](loops/patch/) | You have a confirmed bug and a candidate fix | unified-diff patch | executing `verify.py` exits 0 |
+| [patch](loops/patch/) | You have a reproducible finding and a candidate fix | patch (unified diff) | executing `verify.py` exits 0 |
 
-More to come: vuln-scan, triage, dependency-audit, secret-scan. Each arrives with
-its own executable verifier or it does not arrive.
+More to come: vuln-scan, triage, dependency-audit, secret-scan. Each arrives
+with its own executable verifier or it does not arrive.
 
 ## Try it
 
@@ -36,22 +36,21 @@ cd loops/threat-model
 python3 verify.py examples/THREAT_MODEL.json       # PASS, exit 0
 python3 verify.py examples/THREAT_MODEL.fail.json  # BLOCKED, exit 1
 
-# Patch (executing verifier — run in a sandbox or CI)
+# Patch (executing verifier — sandbox or CI only)
 cd ../patch
-python3 verify.py examples/good.patch              # PASS
-python3 verify.py examples/no-fix.patch            # BLOCKED (PT-NO-FIX)
-python3 verify.py examples/breaks-tests.patch      # BLOCKED (PT-BREAKS-TESTS)
+python3 verify.py examples/good.patch                 # PASS
+python3 verify.py examples/bad-no-fix.patch             # PT-NO-FIX
+python3 verify.py examples/bad-breaks-tests.patch       # PT-BREAKS-TESTS
 
 # Enforce the loop + catalog contract
 python3 ci/check.py
 
 # Preview the site locally (repo root is the site root)
-npm run dev      # http://localhost:4173
+npm run dev
 ```
 
-**Patch loop sandbox:** the patch verifier executes commands declared in the
-fixture's `loop.config.json` (PoC and tests). Run it only against fixtures you
-trust, inside a sandbox or CI runner — not on production systems.
+The patch verifier runs commands declared in the project's `loop.config.json`.
+Run it in a container or sandbox, not blindly on a workstation.
 
 Site and catalog are served from repo root — no build step, no copied
 artifacts. GitHub Pages: Settings → Pages → Deploy from branch `main`,
@@ -59,12 +58,7 @@ folder `/ (root)`. Include `.nojekyll` so Jekyll does not mangle paths.
 
 Browse at `/` and read the guide at `/learn/`. Machine index:
 `./catalog.json` (on a project page:
-`https://<user>.github.io/loopforge/catalog.json`).
-
-The failing example is half-finished and dressed up to look done: a threat
-pointing at an entry point that does not exist, two entry points on the attack
-surface with no threat modeling them, a critical threat with no mitigation. The
-gate catches all of it.
+`https://libanmohamud-spec.github.io/loopforge/catalog.json`).
 
 ## Contributing a loop
 
@@ -86,10 +80,10 @@ points at a real verifier, every loop under `loops/` is indexed, and every
 ## What a verifier is and isn't
 
 The threat-model verifier proves the model is complete and internally
-consistent: every threat hangs off a real entry point and a real asset, every
-entry point on the surface is modeled, every high/critical threat is mitigated.
-It does not judge whether the threat model is *good*. It guarantees the floor,
-not the ceiling. That split is deliberate. Determinism belongs on the floor.
+consistent. The patch verifier proves a named finding is fixed and tests still
+pass — by executing the PoC and tests, not by reading a claim. Neither judges
+whether the work is *good*. They guarantee the floor, not the ceiling. That
+split is deliberate. Determinism belongs on the floor.
 
 ## License
 

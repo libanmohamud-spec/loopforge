@@ -1,6 +1,7 @@
 {
+  "verifier": "verify.py",
   "cases": [
-    { "example": "examples/THREAT_MODEL.json", "expect": 0 },
-    { "example": "examples/THREAT_MODEL.fail.json", "expect": "nonzero" }
+    { "name": "passing model closes the loop", "args": ["examples/THREAT_MODEL.json"], "expect": "zero" },
+    { "name": "broken model is rejected", "args": ["examples/THREAT_MODEL.fail.json"], "expect": "nonzero" }
   ]
 }

@@ -1,0 +1,13 @@
+diff --git a/app.py b/app.py
+index dc6f9ed..a74e2a9 100644
+--- a/app.py
++++ b/app.py
+@@ -13,7 +13,7 @@ import subprocess
+ 
+ 
+ def run_report(name: str) -> str:
+-    # VULNERABLE: untrusted input interpolated into a shell command.
++    # Attempted fix: added a comment. (This does NOT remove the injection.)
+     cmd = f"echo Report for {name}"
+     result = subprocess.run(cmd, shell=True, capture_output=True, text=True)
+     return result.stdout.strip()

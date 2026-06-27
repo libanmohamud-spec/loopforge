@@ -1,7 +1,8 @@
 {
+  "verifier": "verify.py",
   "cases": [
-    { "example": "examples/good.patch", "expect": 0 },
-    { "example": "examples/no-fix.patch", "expect": "nonzero" },
-    { "example": "examples/breaks-tests.patch", "expect": "nonzero" }
+    { "name": "good patch: fixed, tests green", "args": ["examples/good.patch"], "expect": "zero" },
+    { "name": "no-fix patch is rejected", "args": ["examples/bad-no-fix.patch"], "expect": "nonzero" },
+    { "name": "behaviour-breaking patch is rejected", "args": ["examples/bad-breaks-tests.patch"], "expect": "nonzero" }
   ]
 }

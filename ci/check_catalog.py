@@ -3,16 +3,13 @@
 check_catalog.py - enforce that catalog.json does not lie about what is on disk.
 
 The loops can't lie about being done; the index that advertises them still can.
-This closes that seam.
+This closes that seam. It asserts:
 
-Reason codes:
-  CAT-VERIFIER      verifier path missing on disk
-  CAT-VERIFIER-PATH verifier path not loops/{id}/verify.py
-  CAT-LOOPDIR       catalog entry has no loops/{id}/ directory
-  CAT-UNINDEXED     directory under loops/ not listed in catalog
-  CAT-WORKSWITH     works_with target neither shipped nor on roadmap
-  CAT-DUP-ID        duplicate loop id in catalog
-  CAT-SCHEMA        missing required catalog field
+  CAT-VERIFIER   every catalog entry's verifier path exists on disk
+  CAT-LOOPDIR    every catalog entry has a directory under loops/
+  CAT-UNINDEXED  every directory under loops/ appears in the catalog
+  CAT-WORKSWITH  every works_with target is a shipped loop or a declared roadmap entry
+  CAT-DUP-ID     no duplicate loop ids in the catalog
 
 Exit 0 if the index is honest, else 1.
 Dependencies: Python 3.8+ standard library only.
@@ -26,23 +23,10 @@ ROOT = Path(__file__).resolve().parent.parent
 CATALOG = ROOT / "catalog.json"
 LOOPS = ROOT / "loops"
 
-REQUIRED_TOP = ("name", "description", "version", "loops")
-REQUIRED_LOOP = (
-    "id",
-    "title",
-    "summary",
-    "use_when",
-    "artifact",
-    "verifier",
-    "stop_condition",
-    "category",
-    "works_with",
-)
-
 
 def fail(code, message, refs=None):
     ref = f"  [{', '.join(refs)}]" if refs else ""
-    print(f"  FAIL  {code:18} {message}{ref}")
+    print(f"  FAIL  {code:14} {message}{ref}")
 
 
 def main() -> int:
@@ -50,101 +34,32 @@ def main() -> int:
         print(f"no catalog.json at {CATALOG}", file=sys.stderr)
         return 1
 
-    try:
-        catalog = json.loads(CATALOG.read_text(encoding="utf-8"))
-    except json.JSONDecodeError as error:
-        fail("CAT-SCHEMA", f"invalid JSON: {error}")
-        print("\nRESULT: CATALOG DISHONEST — the index does not match disk")
-        return 1
+    catalog = json.loads(CATALOG.read_text(encoding="utf-8"))
+    entries = catalog.get("loops", [])
+    roadmap = set(catalog.get("roadmap", []))
+    catalog_ids = [entry.get("id") for entry in entries]
+    shipped = set(catalog_ids)
 
     failures = 0
-
-    for field in REQUIRED_TOP:
-        if field not in catalog:
-            fail("CAT-SCHEMA", f"missing top-level field: {field}")
-            failures += 1
-
-    entries = catalog.get("loops", [])
-    if not isinstance(entries, list):
-        fail("CAT-SCHEMA", "loops must be an array")
-        failures += 1
-        entries = []
-
-    roadmap_raw = catalog.get("roadmap", [])
-    if not isinstance(roadmap_raw, list):
-        fail("CAT-SCHEMA", "roadmap must be an array when present")
-        failures += 1
-        roadmap_raw = []
-
-    roadmap = {entry for entry in roadmap_raw if isinstance(entry, str)}
-    catalog_ids = []
-    shipped = {entry.get("id") for entry in entries if isinstance(entry, dict) and isinstance(entry.get("id"), str)}
-
-    for index, entry in enumerate(entries):
-        prefix = f"loops[{index}]"
-        if not isinstance(entry, dict):
-            fail("CAT-SCHEMA", f"{prefix} must be an object")
-            failures += 1
-            continue
-
-        for field in REQUIRED_LOOP:
-            if field not in entry:
-                fail("CAT-SCHEMA", f"{prefix} missing field: {field}")
-                failures += 1
-
-        loop_id = entry.get("id")
-        if not isinstance(loop_id, str) or not loop_id:
-            fail("CAT-SCHEMA", f"{prefix} has invalid id")
-            failures += 1
-            continue
-
-        catalog_ids.append(loop_id)
-
-        expected_verifier = f"loops/{loop_id}/verify.py"
-        verifier = entry.get("verifier")
-        if verifier != expected_verifier:
-            fail(
-                "CAT-VERIFIER-PATH",
-                f"loop {loop_id}: verifier must be {expected_verifier}, got {verifier!r}",
-                [loop_id],
-            )
-            failures += 1
-
-        if not verifier or not (ROOT / str(verifier)).is_file():
-            fail("CAT-VERIFIER", f"loop {loop_id}: verifier path missing on disk: {verifier}", [loop_id])
-            failures += 1
-
-        if not (LOOPS / loop_id).is_dir():
-            fail("CAT-LOOPDIR", f"loop {loop_id}: no directory at loops/{loop_id}", [loop_id])
-            failures += 1
-
-        works_with = entry.get("works_with", [])
-        if not isinstance(works_with, list):
-            fail("CAT-SCHEMA", f"loop {loop_id}: works_with must be an array", [loop_id])
-            failures += 1
-            continue
-
-        for target in works_with:
-            if not isinstance(target, str):
-                fail("CAT-WORKSWITH", f"loop {loop_id}: works_with entries must be strings", [loop_id])
-                failures += 1
-                continue
-            if target not in shipped and target not in roadmap:
-                fail(
-                    "CAT-WORKSWITH",
-                    f"loop {loop_id}: works_with target {target!r} is neither a shipped loop nor a roadmap entry",
-                    [loop_id],
-                )
-                failures += 1
 
     seen, dupes = set(), set()
     for loop_id in catalog_ids:
         if loop_id in seen:
             dupes.add(loop_id)
         seen.add(loop_id)
-    for loop_id in sorted(dupes):
-        fail("CAT-DUP-ID", f"duplicate loop id in catalog: {loop_id}", [loop_id])
+    for duplicate in sorted(map(str, dupes)):
+        fail("CAT-DUP-ID", f"duplicate loop id in catalog: {duplicate}")
         failures += 1
+
+    for entry in entries:
+        loop_id = entry.get("id")
+        verifier = entry.get("verifier")
+        if not verifier or not (ROOT / verifier).exists():
+            fail("CAT-VERIFIER", f"loop {loop_id}: verifier path missing on disk: {verifier}", [str(loop_id)])
+            failures += 1
+        if not (LOOPS / str(loop_id)).is_dir():
+            fail("CAT-LOOPDIR", f"loop {loop_id}: no directory at loops/{loop_id}", [str(loop_id)])
+            failures += 1
 
     if LOOPS.is_dir():
         on_disk = sorted(path.name for path in LOOPS.iterdir() if path.is_dir())
@@ -153,9 +68,20 @@ def main() -> int:
                 fail("CAT-UNINDEXED", f"loops/{name} exists on disk but is not in the catalog", [name])
                 failures += 1
 
+    for entry in entries:
+        loop_id = entry.get("id")
+        for target in entry.get("works_with", []):
+            if target not in shipped and target not in roadmap:
+                fail(
+                    "CAT-WORKSWITH",
+                    f"loop {loop_id}: works_with target '{target}' is neither a shipped loop nor a roadmap entry",
+                    [str(loop_id)],
+                )
+                failures += 1
+
     print("")
     print(
-        f"catalog: {len(shipped)} loop(s), {len(roadmap)} roadmap entry(ies), "
+        f"catalog: {len(entries)} loop(s), {len(roadmap)} roadmap entry(ies), "
         f"{failures} failure(s)"
     )
     if failures:

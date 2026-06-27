@@ -2,12 +2,25 @@
 """
 check_loops.py - CI enforcement of the loop contract.
 
-Each loop may declare a ci.json manifest listing example artifacts and expected
-verifier exit codes. When no manifest exists, falls back to the legacy
-convention:
+Every loop under loops/ must ship a verifier and examples that prove the gate
+both passes good input and rejects bad input. How those examples are run is
+declared per loop in ci.json:
 
-    examples/*.fail.json   ->  verifier MUST exit non-zero
-    examples/*.json        ->  verifier MUST exit 0
+    {
+      "verifier": "verify.py",
+      "cases": [
+        { "name": "...", "args": ["examples/good.json"],  "expect": "zero"    },
+        { "name": "...", "args": ["examples/bad.json"],   "expect": "nonzero" }
+      ]
+    }
+
+A manifest lets static-artifact loops (threat-model) and executing loops
+(patch) live under one contract: the runner only cares about declared exit
+codes. Loops without a ci.json fall back to the convention that examples/*.json
+must exit 0 and examples/*.fail.json must exit non-zero.
+
+The contract requires at least one passing case and one rejecting case, so a
+verifier that has stopped biting its own failing example fails CI.
 
 Exit 0 if every check matched expectation, else 1.
 Dependencies: Python 3.8+ standard library only.
@@ -22,51 +35,39 @@ ROOT = Path(__file__).resolve().parent.parent
 LOOPS = ROOT / "loops"
 
 
-def matched(code: int, expectation: str) -> bool:
-    return (code == 0) if expectation == "zero" else (code != 0)
-
-
-def load_manifest(loop_dir: Path):
+def cases_from_manifest(loop_dir):
     manifest = loop_dir / "ci.json"
-    if not manifest.is_file():
+    if not manifest.exists():
         return None
-    try:
-        data = json.loads(manifest.read_text(encoding="utf-8"))
-    except json.JSONDecodeError as error:
-        print(f"FAIL  {loop_dir.name}: invalid ci.json: {error}")
-        return "invalid"
-
-    cases = data.get("cases")
-    if not isinstance(cases, list) or not cases:
-        print(f"FAIL  {loop_dir.name}: ci.json must include a non-empty cases array")
-        return "invalid"
-
-    parsed = []
-    for index, case in enumerate(cases):
-        if not isinstance(case, dict):
-            print(f"FAIL  {loop_dir.name}: ci.json cases[{index}] must be an object")
-            return "invalid"
-        example = case.get("example")
-        expect = case.get("expect")
-        if not isinstance(example, str) or not example:
-            print(f"FAIL  {loop_dir.name}: ci.json cases[{index}] missing example path")
-            return "invalid"
-        if expect not in (0, "zero", "nonzero"):
-            print(f"FAIL  {loop_dir.name}: ci.json cases[{index}] expect must be 0, zero, or nonzero")
-            return "invalid"
-        normalized = "zero" if expect in (0, "zero") else "nonzero"
-        parsed.append((loop_dir / example, normalized))
-    return parsed
-
-
-def legacy_cases(examples_dir: Path):
-    if not examples_dir.is_dir():
-        return []
+    data = json.loads(manifest.read_text(encoding="utf-8"))
+    verifier = loop_dir / data.get("verifier", "verify.py")
     cases = []
-    for example in sorted(examples_dir.glob("*.json")):
-        expectation = "nonzero" if ".fail." in example.name else "zero"
-        cases.append((example, expectation))
+    for case in data.get("cases", []):
+        args = [
+            str((loop_dir / arg)) if not arg.startswith("-") else arg
+            for arg in case["args"]
+        ]
+        cases.append((
+            case.get("name", " ".join(case["args"])),
+            verifier,
+            args,
+            case.get("expect", "zero"),
+        ))
     return cases
+
+
+def cases_from_convention(loop_dir):
+    verifier = loop_dir / "verify.py"
+    examples = sorted((loop_dir / "examples").glob("*.json")) if (loop_dir / "examples").is_dir() else []
+    cases = []
+    for example in examples:
+        expect = "nonzero" if ".fail." in example.name else "zero"
+        cases.append((example.name, verifier, [str(example)], expect))
+    return cases
+
+
+def matched(code, expectation):
+    return (code == 0) if expectation == "zero" else (code != 0)
 
 
 def main() -> int:
@@ -74,61 +75,43 @@ def main() -> int:
         print(f"no loops/ directory at {LOOPS}", file=sys.stderr)
         return 1
 
-    checks = 0
-    failures = 0
-    loops_seen = 0
+    checks = failures = loops_seen = 0
 
     for loop_dir in sorted(path for path in LOOPS.iterdir() if path.is_dir()):
-        verifier = loop_dir / "verify.py"
-        if not verifier.exists():
-            print(f"FAIL  {loop_dir.name}: no verify.py (loop contract requires a verifier)")
+        name = loop_dir.name
+        if not (loop_dir / "verify.py").exists():
+            print(f"FAIL  {name}: no verify.py (loop contract requires a verifier)")
             failures += 1
             continue
 
-        manifest = load_manifest(loop_dir)
-        if manifest == "invalid":
-            failures += 1
-            continue
-
-        cases = manifest if manifest is not None else legacy_cases(loop_dir / "examples")
+        cases = cases_from_manifest(loop_dir)
+        if cases is None:
+            cases = cases_from_convention(loop_dir)
         if not cases:
-            print(f"FAIL  {loop_dir.name}: no ci.json cases and no legacy examples/*.json")
+            print(f"FAIL  {name}: no ci.json cases and no examples/*.json")
             failures += 1
             continue
 
-        has_pass = any(expectation == "zero" for _, expectation in cases)
-        has_fail = any(expectation == "nonzero" for _, expectation in cases)
         loops_seen += 1
-        if not has_pass:
-            print(f"FAIL  {loop_dir.name}: contract requires at least one passing example")
+        expectations = {expect for _, _, _, expect in cases}
+        if "zero" not in expectations:
+            print(f"FAIL  {name}: contract requires at least one passing case")
             failures += 1
-        if not has_fail:
-            print(f"FAIL  {loop_dir.name}: contract requires a failing example the verifier rejects")
+        if "nonzero" not in expectations:
+            print(f"FAIL  {name}: contract requires a rejecting case the verifier blocks")
             failures += 1
 
-        for example, expectation in cases:
-            if not example.is_file():
-                print(f"FAIL  {loop_dir.name}: example missing on disk: {example.relative_to(ROOT)}")
-                failures += 1
-                continue
-
+        for label, verifier, args, expect in cases:
             result = subprocess.run(
-                [sys.executable, str(verifier), str(example)],
+                [sys.executable, str(verifier), *args],
                 capture_output=True,
                 text=True,
             )
             checks += 1
-            rel = example.relative_to(ROOT)
-            if matched(result.returncode, expectation):
-                print(
-                    f"ok    {loop_dir.name}: {rel.name} exit={result.returncode} "
-                    f"(expected {expectation})"
-                )
+            if matched(result.returncode, expect):
+                print(f"ok    {name}: {label} -> exit={result.returncode} (expected {expect})")
             else:
-                print(
-                    f"FAIL  {loop_dir.name}: {rel.name} exit={result.returncode} "
-                    f"(expected {expectation})"
-                )
+                print(f"FAIL  {name}: {label} -> exit={result.returncode} (expected {expect})")
                 failures += 1
 
     print("")

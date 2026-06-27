@@ -1,0 +1,5 @@
+{
+  "finding": "CWE-78 OS command injection in app.run_report",
+  "poc": "python3 poc/poc.py",
+  "tests": "python3 -m unittest discover -s tests -q"
+}

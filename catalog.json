@@ -1,7 +1,7 @@
 {
   "name": "loopforge",
   "description": "Security agent loops where the verify gate is executable, not prose. A loop closes only when its verifier exits 0.",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "roadmap": [
     "vuln-scan",
     "triage",
@@ -24,14 +24,14 @@
     {
       "id": "patch",
       "title": "Patch loop",
-      "summary": "Prove a candidate fix by executing: reproduce PoC, apply patch, confirm PoC dead, tests green.",
-      "use_when": "You have a confirmed vulnerability and a candidate patch to land.",
-      "artifact": "PATCH_FILE (unified diff)",
+      "summary": "Fix a verified finding and prove by execution that the PoC no longer reproduces and tests still pass.",
+      "use_when": "You have a reproducible finding and a candidate fix.",
+      "artifact": "patch (unified diff)",
       "verifier": "loops/patch/verify.py",
-      "stop_condition": "python3 loops/patch/verify.py PATCH_FILE exits 0",
+      "stop_condition": "python3 loops/patch/verify.py <patch> exits 0",
       "category": "appsec",
-      "works_with": ["threat-model", "vuln-scan", "triage"],
-      "verifier_runtime": "python3.8+; git or patch on PATH"
+      "works_with": ["threat-model", "triage"],
+      "verifier_runtime": "python3.8+ stdlib, git"
     }
   ]
 }
