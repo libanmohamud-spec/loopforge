@@ -1,0 +1,6 @@
+{
+  "cases": [
+    { "example": "examples/THREAT_MODEL.json", "expect": 0 },
+    { "example": "examples/THREAT_MODEL.fail.json", "expect": "nonzero" }
+  ]
+}

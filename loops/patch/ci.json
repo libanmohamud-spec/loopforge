@@ -1,0 +1,7 @@
+{
+  "cases": [
+    { "example": "examples/good.patch", "expect": 0 },
+    { "example": "examples/no-fix.patch", "expect": "nonzero" },
+    { "example": "examples/breaks-tests.patch", "expect": "nonzero" }
+  ]
+}

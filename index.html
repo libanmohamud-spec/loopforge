@@ -33,7 +33,7 @@
 
     <main>
       <section class="hero wrap">
-        <p class="eyebrow">v0.1 · executable verify gates</p>
+        <p class="eyebrow">v0.2 · executable verify gates</p>
         <h1>The agent proposes. The verifier authorises.</h1>
         <p class="lede">
           A library of security agent loops where “done” means
@@ -52,10 +52,16 @@
       </section>
 
       <section class="wrap try">
-        <h2>Try the threat-model verifier</h2>
-        <pre><code>cd loops/threat-model
+        <h2>Try the verifiers</h2>
+        <pre><code># threat-model (static artifact)
+cd loops/threat-model
 python3 verify.py examples/THREAT_MODEL.json       # PASS
-python3 verify.py examples/THREAT_MODEL.fail.json  # BLOCKED</code></pre>
+python3 verify.py examples/THREAT_MODEL.fail.json  # BLOCKED
+
+# patch (executing — sandbox or CI only)
+cd ../patch
+python3 verify.py examples/good.patch              # PASS
+python3 verify.py examples/no-fix.patch            # PT-NO-FIX</code></pre>
       </section>
     </main>
 

@@ -1,0 +1,10 @@
+--- a/app.py
++++ b/app.py
+@@ -1,6 +1,7 @@
+ """Minimal command runner with CWE-78 shell interpolation (intentionally vulnerable)."""
+ 
+ import os
++# TODO: sanitize user input before shell interpolation
+ import sys
+ 
+ 

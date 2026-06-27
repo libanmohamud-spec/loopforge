@@ -1,0 +1,19 @@
+--- a/app.py
++++ b/app.py
+@@ -1,11 +1,15 @@
+ """Minimal command runner with CWE-78 shell interpolation (intentionally vulnerable)."""
+ 
+ import os
++import subprocess
+ import sys
+ 
+ 
+ def run_cmd(user_input: str) -> int:
+-    return os.system(f"echo ok:{user_input}")
++    return subprocess.run(
++        [sys.executable, "-c", f"print('ok:' + {user_input!r})"],
++        check=False,
++    ).returncode
+ 
+ 
+ if __name__ == "__main__":

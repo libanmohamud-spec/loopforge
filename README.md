@@ -22,18 +22,25 @@ produce / revise  ──►  artifact  ──►  verify.py
 
 | Loop | Use when | Artifact | Stop condition |
 |---|---|---|---|
-| [threat-model](loops/threat-model/) | Before scanning a new codebase | `THREAT_MODEL.json` | `verify.py` exits 0 |
+| [threat-model](loops/threat-model/) | Before scanning a new codebase | `THREAT_MODEL.json` | static `verify.py` exits 0 |
+| [patch](loops/patch/) | You have a confirmed bug and a candidate fix | unified-diff patch | executing `verify.py` exits 0 |
 
-More to come: vuln-scan, triage, patch, dependency-audit, secret-scan. Each
-arrives with its own executable verifier or it does not arrive.
+More to come: vuln-scan, triage, dependency-audit, secret-scan. Each arrives with
+its own executable verifier or it does not arrive.
 
 ## Try it
 
 ```bash
-# Run the verifier
+# Threat-model (static artifact)
 cd loops/threat-model
 python3 verify.py examples/THREAT_MODEL.json       # PASS, exit 0
 python3 verify.py examples/THREAT_MODEL.fail.json  # BLOCKED, exit 1
+
+# Patch (executing verifier — run in a sandbox or CI)
+cd ../patch
+python3 verify.py examples/good.patch              # PASS
+python3 verify.py examples/no-fix.patch            # BLOCKED (PT-NO-FIX)
+python3 verify.py examples/breaks-tests.patch      # BLOCKED (PT-BREAKS-TESTS)
 
 # Enforce the loop + catalog contract
 python3 ci/check.py
@@ -41,6 +48,10 @@ python3 ci/check.py
 # Preview the site locally (repo root is the site root)
 npm run dev      # http://localhost:4173
 ```
+
+**Patch loop sandbox:** the patch verifier executes commands declared in the
+fixture's `loop.config.json` (PoC and tests). Run it only against fixtures you
+trust, inside a sandbox or CI runner — not on production systems.
 
 Site and catalog are served from repo root — no build step, no copied
 artifacts. GitHub Pages: Settings → Pages → Deploy from branch `main`,
@@ -63,6 +74,8 @@ A loop is accepted when it ships:
 2. `prompt.md` — the agent instruction
 3. a **runnable verifier** that exits 0 only when the loop is genuinely done
 4. a passing example and a failing example
+5. `ci.json` — manifest of example cases and expected exit codes (legacy
+   `examples/*.fail.json` convention still works for static JSON loops)
 
 No verifier, no loop. The verifier is the point.
 

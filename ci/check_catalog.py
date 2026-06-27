@@ -78,7 +78,7 @@ def main() -> int:
 
     roadmap = {entry for entry in roadmap_raw if isinstance(entry, str)}
     catalog_ids = []
-    shipped = set()
+    shipped = {entry.get("id") for entry in entries if isinstance(entry, dict) and isinstance(entry.get("id"), str)}
 
     for index, entry in enumerate(entries):
         prefix = f"loops[{index}]"
@@ -99,7 +99,6 @@ def main() -> int:
             continue
 
         catalog_ids.append(loop_id)
-        shipped.add(loop_id)
 
         expected_verifier = f"loops/{loop_id}/verify.py"
         verifier = entry.get("verifier")
